@@ -17,6 +17,11 @@ function Vocab (uri, graph, values, base) {
         })
       },
       set: function (value) {
+        // This replaces
+        graph.removeMatches(
+          rdf.NamedNode(uri),
+          rdf.NamedNode(base + prop))
+
         graph.add(rdf.Triple(
           rdf.NamedNode(uri),
           rdf.NamedNode(base + prop),
