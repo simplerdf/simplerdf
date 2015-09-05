@@ -20,4 +20,4 @@ me.ui.backgroundImage = 'vangog.png'
 console.log(me['http://xmlns.com/foaf/0.1/name'])
 console.log(me.foaf.name)
 
-console.log(a.toString())
+console.log(me.toString())
