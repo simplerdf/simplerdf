@@ -62,10 +62,10 @@ SimpleRDF.prototype.context = function (context) {
       defineProperty.call(self, self.uri, self.graph, context[key], context[key], 'Literal')
       defineProperty.call(self, self.uri, self.graph, context[key], key, 'Literal')
     } else {
-      if (context[key]['@iri'] &&
+      if (context[key]['@id'] &&
           context[key]['@type'] && context[key]['@type'] === '@id') {
-        defineProperty.call(self, self.uri, self.graph, context[key]['@iri'], context[key]['@iri'], 'NamedNode')
-        defineProperty.call(self, self.uri, self.graph, context[key]['@iri'], key, 'NamedNode')
+        defineProperty.call(self, self.uri, self.graph, context[key]['@id'], context[key]['@id'], 'NamedNode')
+        defineProperty.call(self, self.uri, self.graph, context[key]['@id'], key, 'NamedNode')
       }
     }
   })

@@ -3,7 +3,7 @@ var me = new SimpleRDF('https://nicolagreco.com')
 me.context({
   'name': 'http://xmlns.com/foaf/0.1/name',
   'homepage': {
-    '@iri': 'http://xmlns.com/foaf/0.1/homepage',
+    '@id': 'http://xmlns.com/foaf/0.1/homepage',
     '@type': '@id'
   }
 })
