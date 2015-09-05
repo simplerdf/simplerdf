@@ -57,6 +57,27 @@ me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
 console.log(me.foaf.name)
 ```
 
+### Bonus: Using JSON-LD context
+
+```javascript
+var me = new SimpleRDF('https://nicolagreco.com')
+me.context({
+  'name': 'http://xmlns.com/foaf/0.1/name',
+  'homepage': {
+    '@iri': 'http://xmlns.com/foaf/0.1/homepage',
+    '@type': '@id'
+  }
+})
+
+me.name = 'Nicola'
+me.homepage = 'http://nicolagreco.com'
+
+console.log(me.name)
+console.log(me['http://xmlns.com/foaf/0.1/name'])
+
+console.log(me.toString())
+```
+
 ### Bonus: Loading an existing graph with rdf-ext
 ```javascript
 var LdpStore = require('rdf-store-ldp')
