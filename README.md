@@ -41,12 +41,20 @@ me.register('foaf',
 
 ### 3) Use it!
 
-Now we can do any kind of action:
+Now we can do any kind of action
 
 ```javascript
 me.foaf.name = 'Nicola'
 console.log(me.foaf.name)
 // ['Nicola']
+
+me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
+console.log(me['http://xmlns.com/foaf/0.1/name'])
+// ['Nicola']
+
+// These are interchangable
+me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
+console.log(me.foaf.name)
 ```
 
 ### Bonus: Loading an existing graph with rdf-ext
