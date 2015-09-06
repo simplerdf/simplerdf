@@ -44,8 +44,8 @@ or load a context:
 ```javascript
 me.context({
   'name': 'http://xmlns.com/foaf/0.1/name',
-  'homepage': {
-    '@id': 'http://xmlns.com/foaf/0.1/homepage',
+  'knows': {
+    '@id': 'http://xmlns.com/foaf/0.1/knows',
     '@type': '@id'
   }
 })
