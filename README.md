@@ -26,9 +26,9 @@ npm install --save simplerdf
 var me = new SimpleRDF(/* uri, graph */)
 ```
 
-### 2) Register a NameSpace
+### 2) Register a NameSpace or load a context
 
-Make sure to put `Literal:` or `NamedNode:` in front of the attribute, this will be important to differentiate between `""` and `<>`.
+Make sure to specify `Literal` or `NamedNode`, this will be important to differentiate between `""` and `<>`.
 
 ```javascript
 me.register('foaf',
@@ -39,6 +39,18 @@ me.register('foaf',
   'http://xmlns.com/foaf/0.1/')
 ```
 
+or load a context:
+
+```javascript
+me.context({
+  'name': 'http://xmlns.com/foaf/0.1/name',
+  'homepage': {
+    '@id': 'http://xmlns.com/foaf/0.1/homepage',
+    '@type': '@id'
+  }
+})
+```
+
 ### 3) Use it!
 
 Now we can do any kind of action
@@ -46,11 +58,11 @@ Now we can do any kind of action
 ```javascript
 me.foaf.name = 'Nicola'
 console.log(me.foaf.name)
-// ['Nicola']
+// 'Nicola'
 
 me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
 console.log(me['http://xmlns.com/foaf/0.1/name'])
-// ['Nicola']
+// 'Nicola'
 
 // These are interchangable
 me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
@@ -64,7 +76,7 @@ var me = new SimpleRDF('https://nicolagreco.com')
 me.context({
   'name': 'http://xmlns.com/foaf/0.1/name',
   'homepage': {
-    '@iri': 'http://xmlns.com/foaf/0.1/homepage',
+    '@id': 'http://xmlns.com/foaf/0.1/homepage',
     '@type': '@id'
   }
 })
@@ -74,7 +86,6 @@ me.homepage = 'http://nicolagreco.com'
 
 console.log(me.name)
 console.log(me['http://xmlns.com/foaf/0.1/name'])
-
 console.log(me.toString())
 ```
 
