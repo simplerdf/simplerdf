@@ -2,14 +2,15 @@
 
 #### Attention: this is only for brave people that want to build the future
 
-The idea is that RDF should be as easy as playing with JSON objects. In other words, retrieving the `foaf#name` of a graph should not be painful, one should just do the following:
+The idea is that RDF should be as easy as playing with JSON objects. In other words, getting or setting the `foaf#name` of a graph should not be painful, one should just do the following (all of them work)
 
 ```javascript
+// using an existing graph
+me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
+// by registering the foaf namespace
 me.foaf.name = 'Nicola'
-
-me.toString()
-// <https://nicolagreco.com> <http://xmlns.com/foaf/0.1/name> "Nicola" .
-
+// by defining the context
+me.name = 'Nicola'
 ```
 
 ## Install
@@ -26,7 +27,7 @@ npm install --save simplerdf
 var me = new SimpleRDF(/* uri, graph */)
 ```
 
-### 2) Register a NameSpace or load a context
+### 2) (Optional) Register a NameSpace or load a context
 
 Make sure to specify `Literal` or `NamedNode`, this will be important to differentiate between `""` and `<>`.
 

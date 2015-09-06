@@ -3,7 +3,9 @@ var rdf = require('rdf-ext')()
 module.exports = SimpleRDF
 
 function defineProperty (uri, graph, path, prop, type) {
+  console.log('setting up ' + prop + ' with path ' + path)
   Object.defineProperty(this, prop, {
+    configurable: true,
     get: function () {
       var values = graph.match(uri, path)
       var arr = values.toArray().map(function (t) {
@@ -40,8 +42,16 @@ function Vocab (uri, graph, values, base) {
 }
 
 function SimpleRDF (uri, graph) {
-  this.uri = uri || ''
-  this.graph = graph || rdf.createGraph()
+  var self = this
+  self.uri = uri || ''
+  self.graph = graph || rdf.createGraph()
+
+  graph
+    .match(uri)
+    .forEach(function (t) {
+      var type = t.object.interfaceName
+      defineProperty.call(self, uri, graph, t.predicate.toString(), t.predicate.toString(), type)
+    })
 }
 
 SimpleRDF.prototype.register = function (name, values, base) {

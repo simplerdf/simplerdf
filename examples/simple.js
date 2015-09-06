@@ -1,24 +1,14 @@
+var LdpStore = require('rdf-store-ldp')
+var rdf = require('rdf-ext')()
 var SimpleRDF = require('../')
+var store = new LdpStore(rdf)
 
-var me = new SimpleRDF('https://nicolagreco.com')
-me.register('foaf',
-  {
-    name: 'Literal',
-    knows: ['NamedNode']
-  },
-  'http://xmlns.com/foaf/0.1/')
+store.graph(
+  'https://nicola.databox.me/profile/card',
+  function (graph) {
+    var me = new SimpleRDF('https://nicola.databox.me/profile/card#me', graph)
 
-me.register('ui',
-  {
-    backgroundImage: 'NamedNode'
-  },
-  'http://www.w3.org/ns/ui#')
-
-me.foaf.name = 'Nicola'
-me.foaf.knows = ['http://melvincarvalho.com/#me']
-me.ui.backgroundImage = 'vangog.png'
-
-console.log(me['http://xmlns.com/foaf/0.1/name'])
-console.log(me.foaf.knows)
-
-console.log(me.toString())
+    console.log(me['http://xmlns.com/foaf/0.1/knows'])
+    // [ 'Nicola Greco' ]
+    me['http://xmlns.com/foaf/0.1/knows'] = 'http://a'
+  })
