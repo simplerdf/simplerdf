@@ -10,7 +10,7 @@ function defineProperty (uri, graph, path, prop, type) {
         return t.object.toString()
       })
 
-      if (arr.length === 1) {
+      if (arr.length === 1 && !Array.isArray(type)) {
         return arr[0]
       } else {
         return arr
@@ -25,8 +25,7 @@ function defineProperty (uri, graph, path, prop, type) {
       graph.add(rdf.Triple(
         rdf.NamedNode(uri),
         rdf.NamedNode(path),
-        rdf[type](value)
-        ))
+        rdf[Array.isArray(type) ? type[0] : type](value)))
     }
   })
 }

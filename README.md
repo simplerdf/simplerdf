@@ -39,6 +39,10 @@ me.register('foaf',
   'http://xmlns.com/foaf/0.1/')
 ```
 
+##### tip
+
+With this implementation of knows, if only one is provided, it will return it as a string, if multiple, they will be an array. In case you want to force it to alway be an array, you can define it as `['NamedNode']` type.
+
 or load a context:
 
 ```javascript
