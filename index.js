@@ -6,9 +6,15 @@ function defineProperty (uri, graph, path, prop, type) {
   Object.defineProperty(this, prop, {
     get: function () {
       var values = graph.match(uri, path)
-      return values.toArray().map(function (t) {
+      var arr = values.toArray().map(function (t) {
         return t.object.toString()
       })
+
+      if (arr.length === 1) {
+        return arr[0]
+      } else {
+        return arr
+      }
     },
     set: function (value) {
       // This replaces
