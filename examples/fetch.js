@@ -8,10 +8,10 @@ store.graph(
   function (graph) {
     var me = new SimpleRDF('https://nicola.databox.me/profile/card#me', graph)
     me.register('foaf',
-      [
-        'Literal:name',
-        'NamedNode:knows'
-      ],
+      {
+        name: 'Literal',
+        knows: 'NamedNode'
+      },
       'http://xmlns.com/foaf/0.1/')
 
     console.log(me.foaf.name)

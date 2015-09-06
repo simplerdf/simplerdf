@@ -27,10 +27,9 @@ function defineProperty (uri, graph, path, prop, type) {
 
 function Vocab (uri, graph, values, base) {
   var self = this
-  values.forEach(function (obj) {
-    var splits = obj.split(':')
-    var prop = splits[1]
-    var type = splits[0]
+  Object.keys(values).forEach(function (key) {
+    var prop = key
+    var type = values[key]
     defineProperty.call(self, uri, graph, base + prop, prop, type)
   })
 }
@@ -44,10 +43,9 @@ SimpleRDF.prototype.register = function (name, values, base) {
   var self = this
   self[name] = new Vocab(self.uri, self.graph, values, base)
 
-  values.forEach(function (obj) {
-    var splits = obj.split(':')
-    var prop = splits[1]
-    var type = splits[0]
+  Object.keys(values).forEach(function (key) {
+    var prop = key
+    var type = values[key]
     defineProperty.call(self, self.uri, self.graph, base + prop, base + prop, type)
   })
 

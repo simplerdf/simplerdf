@@ -2,15 +2,16 @@ var SimpleRDF = require('../')
 
 var me = new SimpleRDF('https://nicolagreco.com')
 me.register('foaf',
-  [
-    'Literal:name',
-    'NamedNode:knows'
-  ],
+  {
+    name: 'Literal',
+    knows: 'NamedNode'
+  },
   'http://xmlns.com/foaf/0.1/')
+
 me.register('ui',
-  [
-    'NamedNode:backgroundImage'
-  ],
+  {
+    backgroundImage: 'NamedNode'
+  },
   'http://www.w3.org/ns/ui#')
 
 me.foaf.name = 'Nicola'
