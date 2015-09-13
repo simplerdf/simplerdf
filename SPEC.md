@@ -64,7 +64,7 @@ me.knows[n]
 Setting multiple objects to the same predicate: 
 
 ```javascript
-me.knows = ['http://nicola.io/#me', http://timbl.com/#me]
+me.knows = ['http://nicola.io/#me', 'http://timbl.com/#me']
 ```
 
 Adding multiple objects to the same predicate
