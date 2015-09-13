@@ -14,6 +14,8 @@ me.foaf.name = 'Nicola'
 me.name = 'Nicola'
 ```
 
+Have a look at the [spec attempt](https://github.com/nicola/simplerdf/blob/master/SPEC.md)
+
 ## Install
 
 ```javascript
