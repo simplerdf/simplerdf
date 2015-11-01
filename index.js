@@ -1,4 +1,4 @@
-var rdf = require('rdf-ext')()
+var rdf = require('rdf-ext')
 
 module.exports = SimpleRDF
 
@@ -7,9 +7,14 @@ function defineProperty (uri, graph, path, prop, type) {
   Object.defineProperty(this, prop, {
     configurable: true,
     get: function () {
+      var self = this
       var values = graph.match(uri, path)
       var arr = values.toArray().map(function (t) {
-        return t.object.toString()
+        if (t.object.interfaceName === 'BlankNode') {
+          return self.clone(t.object)
+        } else {
+          return t.object.toString()
+        }
       })
 
       if (arr.length === 1 && !Array.isArray(type)) {
@@ -21,13 +26,13 @@ function defineProperty (uri, graph, path, prop, type) {
     set: function (value) {
       // This replaces
       graph.removeMatches(
-        rdf.NamedNode(uri),
-        rdf.NamedNode(path))
+        uri,
+        rdf.createNamedNode(path))
 
-      graph.add(rdf.Triple(
-        rdf.NamedNode(uri),
-        rdf.NamedNode(path),
-        rdf[Array.isArray(type) ? type[0] : type](value)))
+      graph.add(rdf.createTriple(
+        uri,
+        rdf.createNamedNode(path),
+        rdf['create' + (Array.isArray(type) ? type[0] : type)](value.toString())))
     }
   })
 }
@@ -43,7 +48,7 @@ function Vocab (uri, graph, values, base) {
 
 function SimpleRDF (uri, graph) {
   var self = this
-  self.uri = uri || ''
+  self.uri = typeof uri === 'string' ? rdf.createNamedNode(uri) : uri
   self.graph = graph || rdf.createGraph()
 
   graph
@@ -52,6 +57,16 @@ function SimpleRDF (uri, graph) {
       var type = t.object.interfaceName
       defineProperty.call(self, uri, graph, t.predicate.toString(), t.predicate.toString(), type)
     })
+}
+
+SimpleRDF.prototype.clone = function (uri) {
+  var self = this
+
+  var clone = new SimpleRDF(uri, self.graph)
+
+  clone.context(self._context)
+
+  return clone
 }
 
 SimpleRDF.prototype.register = function (name, values, base) {
@@ -69,6 +84,8 @@ SimpleRDF.prototype.register = function (name, values, base) {
 
 SimpleRDF.prototype.context = function (context) {
   var self = this
+
+  self._context = context
 
   Object.keys(context).forEach(function (key) {
     if (typeof context[key] === 'string') {
