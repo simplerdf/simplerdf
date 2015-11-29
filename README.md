@@ -1,4 +1,4 @@
-# SimpleRDFRDF
+# SimpleRDF
 
 #### Attention: this is only for brave people that want to build the future
 #### Please, read [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
@@ -68,6 +68,18 @@ console.log(me['http://xmlns.com/foaf/0.1/name'])
 // These are interchangable
 me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
 console.log(me.name)
+```
+
+## Undocumented features
+
+```javascript
+SimpleRDF(context, iri).get(function(err, g) {
+  console.log(g.name)
+})
+
+var g = SimpleRDF(context, iri)
+g.name = "Nicola"
+g.save()
 ```
 
 ### Bonus: Using JSON-LD context
