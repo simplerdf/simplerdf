@@ -1,4 +1,4 @@
-# SimpleRDF
+# SimpleRDFRDF
 
 #### Attention: this is only for brave people that want to build the future
 #### Please, read [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
@@ -20,12 +20,17 @@ Have a look at the [spec attempt](https://github.com/nicola/simplerdf/blob/maste
 npm install --save simplerdf
 ```
 
+To generate a browser-ready version:
+```
+$ npm run build
+```
+
 ## Usage
 
 ### 1) Create a SimpleRDF object
 
 ```javascript
-var me = simple(/*context, uri, graph */)
+var me = SimpleRDF(/*context, uri, graph */)
 ```
 
 ### 2) (Optional) Load a context
@@ -70,7 +75,7 @@ var context = {
     '@type': '@id'
   }
 }
-var me = simple(context, 'https://nicolagreco.com')
+var me = SimpleRDF(context, 'https://nicolagreco.com')
 me.name = 'Nicola'
 me.homepage = 'http://nicolagreco.com'
 

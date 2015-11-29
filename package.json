@@ -4,7 +4,8 @@
   "description": "RDF as easy as js objects",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify . > simplerdf.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/nicola/simplerdf/issues"
   },
-  "homepage": "https://github.com/nicola/simplerdf"
+  "homepage": "https://github.com/nicola/simplerdf",
+  "devDependencies": {
+    "browserify": "^12.0.1"
+  }
 }
