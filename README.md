@@ -8,8 +8,6 @@ The idea is that RDF should be as easy as playing with JSON objects. In other wo
 ```javascript
 // using an existing graph
 me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
-// by registering the foaf namespace
-me.foaf.name = 'Nicola'
 // by defining the context
 me.name = 'Nicola'
 ```
@@ -30,24 +28,9 @@ npm install --save simplerdf
 var me = new SimpleRDF(/* uri, graph */)
 ```
 
-### 2) (Optional) Register a NameSpace or load a context
+### 2) (Optional) Load a context
 
 Make sure to specify `Literal` or `NamedNode`, this will be important to differentiate between `""` and `<>`.
-
-```javascript
-me.register('foaf',
-  {
-    name: 'Literal',
-    knows: 'NamedNode'
-  },
-  'http://xmlns.com/foaf/0.1/')
-```
-
-##### tip
-
-With this implementation of knows, if only one is provided, it will return it as a string, if multiple, they will be an array. In case you want to force it to alway be an array, you can define it as `['NamedNode']` type.
-
-or load a context:
 
 ```javascript
 me.context({
@@ -64,7 +47,7 @@ me.context({
 Now we can do any kind of action
 
 ```javascript
-me.foaf.name = 'Nicola'
+me.name = 'Nicola'
 console.log(me.foaf.name)
 // 'Nicola'
 
@@ -74,13 +57,13 @@ console.log(me['http://xmlns.com/foaf/0.1/name'])
 
 // These are interchangable
 me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
-console.log(me.foaf.name)
+console.log(me.name)
 ```
 
 ### Bonus: Using JSON-LD context
 
 ```javascript
-var me = new SimpleRDF('https://nicolagreco.com')
+var me = simple('https://nicolagreco.com')
 me.context({
   'name': 'http://xmlns.com/foaf/0.1/name',
   'homepage': {
@@ -95,28 +78,4 @@ me.homepage = 'http://nicolagreco.com'
 console.log(me.name)
 console.log(me['http://xmlns.com/foaf/0.1/name'])
 console.log(me.toString())
-```
-
-### Bonus: Loading an existing graph with rdf-ext
-```javascript
-var LdpStore = require('rdf-store-ldp')
-var rdf = require('rdf-ext')()
-var SimpleRDF = require('../')
-var store = new LdpStore(rdf)
-
-store.graph(
-  'https://nicola.databox.me/profile/card',
-  function (graph) {
-    var me = new SimpleRDF('https://nicola.databox.me/profile/card#me', graph)
-    me.register('foaf',
-      {
-        name: 'Literal',
-        knows: 'NamedNode'
-      },
-      'http://xmlns.com/foaf/0.1/')
-
-    console.log(me.foaf.name)
-    // 'Nicola Greco'
-  })
-
 ```
