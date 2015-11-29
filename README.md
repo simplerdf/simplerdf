@@ -25,6 +25,8 @@ To generate a browser-ready version:
 $ npm run build
 ```
 
+This will generate simplerdf.js that you can load in your web application
+
 ## Usage
 
 ### 1) Create a SimpleRDF object
