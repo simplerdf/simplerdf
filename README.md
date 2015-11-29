@@ -25,7 +25,7 @@ npm install --save simplerdf
 ### 1) Create a SimpleRDF object
 
 ```javascript
-var me = new SimpleRDF(/* uri, graph */)
+var me = simple(/*context, uri, graph */)
 ```
 
 ### 2) (Optional) Load a context
