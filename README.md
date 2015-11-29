@@ -105,6 +105,7 @@ console.log(me.toString())
 
 - Only subject-centric queries (e.g. `graph.match(you_know_this[, predicate, object])`)
 - Schemas must be typed
+- If you want to use any of these two properties, then you want a proper low-level library like [rdf-ext](http://npm.im/rdf-ext) or [rdflib](http://npm.im/rdflib).
 
 ## License
 
