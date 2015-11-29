@@ -100,3 +100,12 @@ console.log(me.name)
 console.log(me['http://xmlns.com/foaf/0.1/name'])
 console.log(me.toString())
 ```
+
+## Limitations
+
+- Only subject-centric queries (e.g. `graph.match(you_know_this[, predicate, object])`)
+- Schemas must be typed
+
+## License
+
+MIT
