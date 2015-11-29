@@ -22,10 +22,13 @@ npm install --save simplerdf
 
 To generate a browser-ready version:
 ```
+$ git clone https://github.com/nicola/simplerdf
+$ cd simplerdf
+$ npm install
 $ npm run build
 ```
 
-This will generate simplerdf.js that you can load in your web application
+This will generate `simplerdf.js` that you can load in your web application
 
 ## Usage
 
