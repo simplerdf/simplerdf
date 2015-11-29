@@ -63,15 +63,14 @@ console.log(me.name)
 ### Bonus: Using JSON-LD context
 
 ```javascript
-var me = simple('https://nicolagreco.com')
-me.context({
+var context = {
   'name': 'http://xmlns.com/foaf/0.1/name',
   'homepage': {
     '@id': 'http://xmlns.com/foaf/0.1/homepage',
     '@type': '@id'
   }
-})
-
+}
+var me = simple(context, 'https://nicolagreco.com')
 me.name = 'Nicola'
 me.homepage = 'http://nicolagreco.com'
 
