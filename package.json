@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify . > simplerdf.js"
+    "build": "browserify index.js --standalone SimpleRDF > simplerdf.js"
   },
   "repository": {
     "type": "git",
