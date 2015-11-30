@@ -1,4 +1,4 @@
-# SimpleRDFRDF
+# SimpleRDF
 
 #### Attention: this is only for brave people that want to build the future
 #### Please, read [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
@@ -22,8 +22,13 @@ npm install --save simplerdf
 
 To generate a browser-ready version:
 ```
+$ git clone https://github.com/nicola/simplerdf
+$ cd simplerdf
+$ npm install
 $ npm run build
 ```
+
+This will generate `simplerdf.js` that you can load in your web application
 
 ## Usage
 
@@ -65,6 +70,18 @@ me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
 console.log(me.name)
 ```
 
+## Undocumented features
+
+```javascript
+SimpleRDF(context, iri).get(function(err, g) {
+  console.log(g.name)
+})
+
+var g = SimpleRDF(context, iri)
+g.name = "Nicola"
+g.save()
+```
+
 ### Bonus: Using JSON-LD context
 
 ```javascript
@@ -83,3 +100,14 @@ console.log(me.name)
 console.log(me['http://xmlns.com/foaf/0.1/name'])
 console.log(me.toString())
 ```
+
+## Limitations
+
+- Only subject-centric queries (e.g. `graph.match(you_know_this[, predicate, object])`)
+- Schemas must be typed
+
+**Note**: If you want to use any of these two properties, then you want a proper low-level library like [rdf-ext](http://npm.im/rdf-ext) or [rdflib](http://npm.im/rdflib), or send a PR!
+
+## License
+
+MIT
