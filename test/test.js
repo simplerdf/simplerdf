@@ -6,6 +6,10 @@ var simple = require('../')
 
 var blogContext = {
   name: 'http://schema.org/name',
+  provider: {
+    '@id': 'http://schema.org/provider',
+    '@type': '@id'
+  },
   post: {
     '@id': 'http://schema.org/post',
     '@array': true
@@ -117,6 +121,18 @@ describe('simplerdf', function () {
     var posts = blog.post
 
     assert(Array.isArray(posts))
+  })
+
+  it('setter should support IRI values', function () {
+    var blog = simple(blogContext)
+    var value = 'http://example.org/provider'
+
+    blog.provider = value
+
+    var node = blog._graph.match(null, 'http://schema.org/provider').toArray().shift().object
+
+    assert.equal(node.interfaceName, 'NamedNode')
+    assert.equal(node.toString(), value)
   })
 
   it('setter should support String values', function () {
