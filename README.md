@@ -3,7 +3,8 @@
 #### Attention: this is only for brave people that want to build the future
 #### Please, read [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
 
-The idea is that RDF should be as easy as playing with JSON objects. In other words, getting or setting the `foaf#name` of a graph should not be painful, one should just do the following (all of them work)
+The idea is that RDF should be as easy as playing with JSON objects.
+In other words, getting or setting the `foaf#name` of a graph should not be painful, one should just do the following (all of them work)
 
 ```javascript
 // using an existing graph
@@ -11,8 +12,6 @@ me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
 // by defining the context
 me.name = 'Nicola'
 ```
-
-Have a look at the [spec attempt](https://github.com/nicola/simplerdf/blob/master/SPEC.md)
 
 ## Install
 
@@ -35,7 +34,7 @@ This will generate `simplerdf.js` that you can load in your web application
 ### 1) Create a SimpleRDF object
 
 ```javascript
-var me = SimpleRDF(/*context, uri, graph */)
+var me = SimpleRDF(/*context, [uri, graph] */)
 ```
 
 ### 2) (Optional) Load a context
@@ -47,7 +46,8 @@ me.context({
   'name': 'http://xmlns.com/foaf/0.1/name',
   'knows': {
     '@id': 'http://xmlns.com/foaf/0.1/knows',
-    '@type': '@id'
+    '@type': '@id',
+    '@array': true  // Please send a PR if you have a better way to do this
   }
 })
 ```
@@ -57,10 +57,12 @@ me.context({
 Now we can do any kind of action
 
 ```javascript
+// You can directly set properties defined in your context
 me.name = 'Nicola'
-console.log(me.foaf.name)
+console.log(me.name)
 // 'Nicola'
 
+// Or you can set the property with a particular type pointer
 me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
 console.log(me['http://xmlns.com/foaf/0.1/name'])
 // 'Nicola'
@@ -70,19 +72,29 @@ me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
 console.log(me.name)
 ```
 
-## Undocumented features
+## Undocumented features (`.get` and `.save`)
 
 ```javascript
+// This gets the iri specified in the constructor
 SimpleRDF(context, iri).get(function(err, g) {
   console.log(g.name)
 })
 
+// This saves the graph in the iri specified in the constructor
 var g = SimpleRDF(context, iri)
 g.name = "Nicola"
 g.save()
+
+// Hint for the brave:
+// You can also do this
+SimpleRDF(context).get(iri1, function (err, g) {
+  g.save(iri2, ..)
+})
 ```
 
-### Bonus: Using JSON-LD context
+### Bonus: Full working example
+
+See other [working examples](https://github.com/nicola/simplerdf/tree/master/examples)
 
 ```javascript
 var context = {
