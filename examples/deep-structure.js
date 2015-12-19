@@ -17,7 +17,7 @@ var blog = simple(blogContext, blogIri)
 var blogPostA = blog.child()
 blogPostA.headline = 'first post'
 blogPostA.content = 'this is my first blog post'
-blog.post = blogPostA
+blog.post.push(blogPostA)
 
 var blogPostB = blog.child()
 blogPostB.headline = 'second post'
