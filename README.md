@@ -1,10 +1,11 @@
 # SimpleRDF
 
-#### Attention: this is only for brave people that want to build the future
-#### Please, read [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
+#### Attention: this library is _work in progress_
 
 The idea is that RDF should be as easy as playing with JSON objects.
-In other words, getting or setting the `foaf#name` of a graph should not be painful, one should just do the following (all of them work)
+In other words, getting or setting the `foaf#name` of a graph should not be painful, one should just do the following (all of them work).
+
+Read the original blog post: [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
 
 ```javascript
 // using an existing graph
