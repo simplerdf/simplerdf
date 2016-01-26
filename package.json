@@ -21,7 +21,7 @@
     "browserify": "^12.0.1"
   },
   "dependencies": {
-    "rdf-ext": "^0.3.0-rc1",
-    "rdf-store-ldp": "^0.3.0-rc2"
+    "rdf-ext": "^0.3.0",
+    "rdf-store-ldp": "^0.3.0"
   }
 }
