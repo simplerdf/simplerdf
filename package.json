@@ -1,6 +1,6 @@
 {
   "name": "simplerdf",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "RDF as easy as js objects",
   "main": "index.js",
   "scripts": {
