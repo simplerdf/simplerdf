@@ -120,7 +120,7 @@ describe('simplerdf', function () {
     var blog = simple(blogContext, blogIri, blogGraph)
     var posts = blog.post
 
-    assert(Array.isArray(posts))
+    assert(simple.isArray(posts))
   })
 
   it('setter should support IRI values', function () {
@@ -187,7 +187,7 @@ describe('simplerdf', function () {
   it('.get should fetch an object from the store with Promise API', function (done) {
     simple(blogContext, blogIri, null, blogStore).get().then(function (blog) {
       assert.equal(blog.name, 'simple blog')
-      assert.equal(blog.post.shift().headline, 'first blog post')
+      assert.equal(blog.post.at(0).headline, 'first blog post')
 
       done()
     }).catch(function (error) {
