@@ -41,6 +41,16 @@ function addValues (self, predicate, options, values) {
       } else {
         self._graph.add(rdf.createTriple(self._iri, predicate, value._iri))
       }
+    } else if (typeof value === 'boolean') {
+      self._graph.add(rdf.createTriple(
+        self._iri,
+        predicate,
+        rdf.createLiteral(value, null, 'http://www.w3.org/2001/XMLSchema#boolean')))
+    } else if (typeof value === 'number') {
+      self._graph.add(rdf.createTriple(
+        self._iri,
+        predicate,
+        rdf.createLiteral(value, null, rdf.createNamedNode('http://www.w3.org/2001/XMLSchema#double'))))
     } else {
       console.warn('unsupported type: ' + typeof value)
     }

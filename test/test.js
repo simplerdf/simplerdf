@@ -5,17 +5,20 @@ var rdf = require('rdf-ext')
 var simple = require('../')
 
 var blogContext = {
+  about: 'http://schema.org/about',
   name: 'http://schema.org/name',
   provider: {
     '@id': 'http://schema.org/provider',
     '@type': '@id'
   },
+  isFamilyFriendly: 'http://schema.org/isFamilyFriendly',
   post: {
     '@id': 'http://schema.org/post',
     '@array': true
   },
   headline: 'http://schema.org/headline',
-  content: 'http://schema.org/content'
+  content: 'http://schema.org/content',
+  version: 'http://schema.org/version'
 }
 
 var blogIri = 'http://example.org/blog'
@@ -141,6 +144,48 @@ describe('simplerdf', function () {
     blog.name = 'simple blog'
 
     assert.equal(blog._graph.match(null, 'http://schema.org/name').toArray().shift().object.toString(), 'simple blog')
+  })
+
+  it('setter should support Object values', function () {
+    var blog = simple(blogContext)
+    var project = blog.child()
+
+    blog.about = project
+
+    assert.equal(blog._graph.match(blog._iri, 'http://schema.org/about', project._iri).length, 1)
+  })
+
+  it('setter should support Node values', function () {
+    var blog = simple(blogContext)
+    var project = rdf.createNamedNode('http://example.org/project')
+
+    blog.about = project
+
+    assert.equal(blog._graph.match(blog._iri, 'http://schema.org/about', project).length, 1)
+  })
+
+  it('setter should support boolean values', function () {
+    var blog = simple(blogContext)
+
+    blog.isFamilyFriendly = true
+
+    var isFamilyFriendly = blog._graph.match(null, 'http://schema.org/isFamilyFriendly').toArray().shift().object
+
+    assert(isFamilyFriendly)
+    assert.equal(isFamilyFriendly.nominalValue, true)
+    assert(isFamilyFriendly.datatype.equals('http://www.w3.org/2001/XMLSchema#boolean'))
+  })
+
+  it('setter should support number values', function () {
+    var post = simple(blogContext)
+
+    post.version = 0.1
+
+    var version = post._graph.match(null, 'http://schema.org/version').toArray().shift().object
+
+    assert(version)
+    assert.equal(version.nominalValue, 0.1)
+    assert(version.datatype.equals('http://www.w3.org/2001/XMLSchema#double'))
   })
 
   it('setter should support Array values', function () {
