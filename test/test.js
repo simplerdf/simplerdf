@@ -195,11 +195,45 @@ describe('simplerdf', function () {
     })
   })
 
+  it('.get should fetch an object from the store using the given IRI with Promise API', function (done) {
+    simple(blogContext, null, null, blogStore).get(blogIri).then(function (blog) {
+      assert.equal(blog.name, 'simple blog')
+      assert.equal(blog.post.at(0).headline, 'first blog post')
+
+      done()
+    }).catch(function (error) {
+      done(error)
+    })
+  })
+
   it('.save should store an object using the store with Promise API', function (done) {
     var blog = simple(blogContext, blogIri, blogGraph.clone(), blogStore)
     var blogCloneIri = 'http://example.org/blog-clone'
 
-    blog.iri(blogCloneIri).save().then(function (blogClone) {
+    blog.iri(blogCloneIri)
+    blog.save().then(function (blogClone) {
+      return blogStore.graph(blogCloneIri)
+    }).then(function (graph) {
+      // patch graph ...
+      graph.match(blogCloneIri).forEach(function (triple) {
+        graph.remove(triple)
+        graph.add(rdf.createTriple(rdf.createNamedNode(blogIri), triple.predicate, triple.object))
+      })
+
+      // ... for compare
+      assert(graph.equals(blogGraph))
+
+      done()
+    }).catch(function (error) {
+      done(error)
+    })
+  })
+
+  it('.save should store an object using the store with Promise API', function (done) {
+    var blog = simple(blogContext, blogIri, blogGraph.clone(), blogStore)
+    var blogCloneIri = 'http://example.org/blog-clone'
+
+    blog.save(blogCloneIri).then(function (blogClone) {
       return blogStore.graph(blogCloneIri)
     }).then(function (graph) {
       // patch graph ...
