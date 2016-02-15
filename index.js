@@ -18,8 +18,12 @@ SimpleRDF.prototype.child = function (iri) {
   return new SimpleRDF(this._context, iri, this._graph, this._store)
 }
 
-SimpleRDF.prototype.get = function () {
+SimpleRDF.prototype.get = function (iri) {
   var self = this
+
+  if (iri) {
+    self.iri(iri)
+  }
 
   return self._store.graph(self._iri.toString()).then(function (graph) {
     self.graph(graph)
@@ -28,8 +32,12 @@ SimpleRDF.prototype.get = function () {
   })
 }
 
-SimpleRDF.prototype.save = function () {
+SimpleRDF.prototype.save = function (iri) {
   var self = this
+
+  if (iri) {
+    self.iri(iri)
+  }
 
   return self._store.add(self._iri.toString(), self._graph).then(function () {
     return self
