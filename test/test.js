@@ -3,6 +3,7 @@
 var assert = require('assert')
 var rdf = require('rdf-ext')
 var simple = require('../')
+var SimpleArray = require('../lib/array')
 
 var blogContext = {
   about: 'http://schema.org/about',
@@ -260,5 +261,99 @@ describe('simplerdf', function () {
     }).catch(function (error) {
       done(error)
     })
+  })
+})
+
+describe('simplearray', function () {
+  it('constructor should init all member variables', function () {
+    var addValue = function () {}
+    var getValue = function () {}
+    var removeValue = function () {}
+
+    var array = new SimpleArray(addValue, getValue, removeValue)
+
+    assert.equal(array._addValue, addValue)
+    assert.equal(array._getValue, getValue)
+    assert.equal(array._removeValue, removeValue)
+    assert(Array.isArray(array._array))
+  })
+
+  it('.at should handle read access for the array', function () {
+    var addValue = function () {}
+    var getValue = function () {}
+    var removeValue = function () {}
+
+    var array = new SimpleArray(addValue, getValue, removeValue)
+
+    array._array = [0, 1, 2]
+
+    assert.equal(array.at(0), 0)
+    assert.equal(array.at(1), 1)
+    assert.equal(array.at(2), 2)
+  })
+
+  it('.at should handle write access for the array', function () {
+    var addSequence = [0, 1, 2, 3]
+    var removeSequence = [1]
+
+    var addValue = function (value) {
+      assert.equal(value, addSequence.shift())
+    }
+    var getValue = function () {}
+    var removeValue = function (value) {
+      assert.equal(value, removeSequence.shift())
+    }
+
+    var array = new SimpleArray(addValue, getValue, removeValue)
+
+    array.at(0, 0)
+    array.at(1, 1)
+    array.at(2, 2)
+    array.at(1, 3)
+
+    assert.equal(array._array[0], 0)
+    assert.equal(array._array[1], 3)
+    assert.equal(array._array[2], 2)
+
+    assert.deepEqual(addSequence, [])
+    assert.deepEqual(removeSequence, [])
+  })
+
+  it('.forEach should be supported', function () {
+    var valueSequence = [0, 1, 2]
+
+    var addValue = function () {}
+    var getValue = function () {}
+    var removeValue = function () {}
+
+    var array = new SimpleArray(addValue, getValue, removeValue)
+
+    array._array = [0, 1, 2]
+
+    array.forEach(function (item) {
+      assert.equal(item, valueSequence.shift())
+      assert.equal(this, 'context')
+    }, 'context')
+
+    assert.deepEqual(valueSequence, [])
+  })
+
+  it('.push should be supported', function () {
+    var addSequence = [0, 1, 2]
+
+    var addValue = function (value) {
+      assert.equal(value, addSequence.shift())
+    }
+    var getValue = function () {}
+    var removeValue = function () {}
+
+    var array = new SimpleArray(addValue, getValue, removeValue)
+
+    array.push(0)
+    array.push(1)
+    array.push(2)
+
+    assert.deepEqual(array._array, [0, 1, 2])
+    assert.deepEqual(addSequence, [])
   })
 })
