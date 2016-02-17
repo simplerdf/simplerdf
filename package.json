@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "build": "browserify index.js --standalone SimpleRDF > simplerdf.js"
+    "build": "browserify -e ./ --standalone SimpleRDF > simplerdf.js"
   },
   "repository": {
     "type": "git",
