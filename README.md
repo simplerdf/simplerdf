@@ -11,6 +11,7 @@ Read the original blog post: [_Towards the future RDF Library_](http://nicola.io
 
 ##### TL;DR example
 ```javascript
+var context = { 'name': 'http://xmlns.com/foaf/0.1/name' }
 var me = SimpleRDF(context)
 // You can edit using the predicate
 me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
