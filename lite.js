@@ -124,59 +124,61 @@ SimpleRDF.prototype.toString = function () {
 SimpleRDF.prototype.context = function (context) {
   var self = this
 
-  self._context = context
+  if (context) {
+    self._context = context
 
-  if (!self._context) {
-    return self
+    Object.keys(context).forEach(function (key) {
+      var value = context[key]
+      var options = {}
+
+      if (typeof value === 'string') {
+        // access values with full IRI
+        addProperty.call(self, value, value, options)
+
+        // access values with short property
+        addProperty.call(self, key, value, options)
+      } else {
+        options.array = '@array' in value && value['@array']
+        options.namedNode = '@type' in value && value['@type'] === '@id'
+
+        addProperty.call(self, value['@id'], value['@id'], options)
+        addProperty.call(self, key, value['@id'], options)
+      }
+    })
   }
 
-  Object.keys(context).forEach(function (key) {
-    var value = context[key]
-    var options = {}
-
-    if (typeof value === 'string') {
-      // access values with full IRI
-      addProperty.call(self, value, value, options)
-
-      // access values with short property
-      addProperty.call(self, key, value, options)
-    } else {
-      options.array = '@array' in value && value['@array']
-      options.namedNode = '@type' in value && value['@type'] === '@id'
-
-      addProperty.call(self, value['@id'], value['@id'], options)
-      addProperty.call(self, key, value['@id'], options)
-    }
-  })
-
-  return self
+  return self._context
 }
 
 SimpleRDF.prototype.iri = function (iri) {
-  iri = buildIri(iri)
+  if (iri) {
+    iri = buildIri(iri)
 
-  updateSubject(this._graph, this._iri, iri)
-  updateObject(this._graph, this._iri, iri)
+    updateSubject(this._graph, this._iri, iri)
+    updateObject(this._graph, this._iri, iri)
 
-  this._iri = iri
+    this._iri = iri
+  }
 
-  return this
+  return this._iri
 }
 
 SimpleRDF.prototype.graph = function (graph) {
   var self = this
 
-  self._graph = graph
+  if (graph) {
+    self._graph = graph
 
-  self._graph.match(self._iri).forEach(function (triple) {
-    var descriptor = Object.getOwnPropertyDescriptor(self, triple.predicate.toString())
+    self._graph.match(self._iri).forEach(function (triple) {
+      var descriptor = Object.getOwnPropertyDescriptor(self, triple.predicate.toString())
 
-    if (!descriptor) {
-      addProperty.call(self, triple.predicate.toString(), triple.predicate.toString())
-    }
-  })
+      if (!descriptor) {
+        addProperty.call(self, triple.predicate.toString(), triple.predicate.toString())
+      }
+    })
+  }
 
-  return self
+  return self._graph
 }
 
 SimpleRDF.prototype.child = function (iri) {
