@@ -44,7 +44,8 @@ $ npm run build
 //           map predicates to nice property names
 // `uri`     is the name of the resource
 // `graph`   if you want to load an `rdf-ext` graph
-var me = SimpleRDF(/*context, [uri, graph] */)
+// `store`   see the FAQ!
+var me = SimpleRDF(/*[context, uri, graph, store] */)
 ```
 
 ### 2) (Optional) Load a context
