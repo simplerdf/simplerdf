@@ -4,8 +4,9 @@
 
 #### Attention: this library is _work in progress_
 
-The idea is that RDF should be as easy as playing with JSON objects.
-In other words, once we create SimpleRDF objects we can get/set their properties easy peasy.
+> The future simplest RDF library ever
+
+RDF should be as easy as playing with JSON objects. Getting and setting should be easy peasy.
 
 Read the original blog post: [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
 
