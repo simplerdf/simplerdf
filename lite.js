@@ -1,5 +1,6 @@
 var rdf = require('rdf-ext')
 var SimpleArray = require('./lib/array')
+var SimpleContext = require('./lib/context')
 
 function buildIri (iri) {
   if (typeof iri === 'string') {
@@ -125,25 +126,14 @@ SimpleRDF.prototype.context = function (context) {
   var self = this
 
   if (context) {
-    self._context = context
+    self._context = context instanceof SimpleContext ? context : new SimpleContext(context)
 
-    Object.keys(context).forEach(function (key) {
-      var value = context[key]
-      var options = {}
+    self._context.descriptions().forEach(function (description) {
+      // access values with full IRI
+      addProperty.call(self, description.predicate, description.predicate, description.options)
 
-      if (typeof value === 'string') {
-        // access values with full IRI
-        addProperty.call(self, value, value, options)
-
-        // access values with short property
-        addProperty.call(self, key, value, options)
-      } else {
-        options.array = '@array' in value && value['@array']
-        options.namedNode = '@type' in value && value['@type'] === '@id'
-
-        addProperty.call(self, value['@id'], value['@id'], options)
-        addProperty.call(self, key, value['@id'], options)
-      }
+      // access values with short property
+      addProperty.call(self, description.property, description.predicate, description.options)
     })
   }
 
