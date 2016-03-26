@@ -230,6 +230,21 @@ describe('simplerdf', function () {
     assert.equal(blog.toString(), '<http://example.org/blog> <http://schema.org/post> <http://example.org/post-1> .')
   })
 
+  it('should keep assigned objects', function () {
+    var blog = simple(blogContext, blogIri)
+    var provider = blog.child()
+
+    provider.name = 'test'
+    provider.getName = function () {
+      return this.name
+    }
+
+    blog.provider = provider
+
+    assert.equal(blog.provider.name, 'test')
+    assert.equal(blog.provider.getName(), 'test')
+  })
+
   it('.get should fetch an object from the store with Promise API', function (done) {
     simple(blogContext, blogIri, null, blogStore).get().then(function (blog) {
       assert.equal(blog.name, 'simple blog')
