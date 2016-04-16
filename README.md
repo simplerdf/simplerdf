@@ -14,12 +14,13 @@ Read the original blog post: [_Towards the future RDF Library_](http://nicola.io
 
 ##### TL;DR example
 ```javascript
+var simple = require('simplerdf')
 var context = { 'name': 'http://xmlns.com/foaf/0.1/name' }
-var me = SimpleRDF(context)
-// You can edit using the predicate
-me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
-// or by using the context
+var me = simple(context)
+// You can now edit the foaf name simply with
 me.name = 'Nicola'
+// as well as using the full predicate
+me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
 ```
 
 ## Install
@@ -44,26 +45,24 @@ $ npm run build
 ### 1) Create a SimpleRDF object
 
 ```javascript
+// The constructor takes 4 optional parameters:
 // `context` is a JSON-LD context, useful if you want to
 //           map predicates to nice property names
 // `uri`     is the name of the resource
 // `graph`   if you want to load an `rdf-ext` graph
 // `store`   see the FAQ!
-var me = SimpleRDF(/*[context, uri, graph, store] */)
-```
+var simple = require('simplerdf')
 
-### 2) (Optional) Load a context
-
-You can load the context when creating the object
-
-```javascript
-var me = SimpleRDF({
+var me = simple({
   'name': 'http://xmlns.com/foaf/0.1/name'
 })
-// now we can use me.name
+// Now we can access this property with
+me.name = 'Nicola'
+// or
+me['http://xmlns.com/foaf/0.1/name'] === 'Nicola'
 ```
 
-or later on (this overrides the previous context)
+Want to change/update the context that maps the graph with the JS object?
 
 ```javascript
 me.context({
@@ -77,9 +76,9 @@ me.context({
 // now we can use me.knows (this will be an array!)
 ```
 
-**Note**: If a properties is meant to contain multiple data (hence it is an array), pass `@array: true` in the schema description!
+**Note**: If a property is meant to contain multiple data (hence it is an array), pass `@array: true` in the schema description!
 
-### 3) Use it!
+### 2) Use it!
 
 Now we can do any kind of action
 
@@ -159,7 +158,7 @@ Of course, when you require it, use the lite version
 var simple = require('simplerdf/lite')
 ```
 
-#### Can I customize the .get and .set?
+#### Can I customize the `.get` and `.set`?
 
 Of course, there are plenty of rdf-ext stores availabe, here are some:
 
