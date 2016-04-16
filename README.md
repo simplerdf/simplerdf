@@ -4,7 +4,8 @@
 
 > The future simplest RDF library ever
 
-RDF should be as easy as playing with JSON objects. Read the original blog post: [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
+RDF should be as easy as playing with JSON objects.
+Read the original blog post: [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
 
 ##### TL;DR example
 ```javascript
