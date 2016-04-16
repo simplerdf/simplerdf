@@ -4,7 +4,7 @@
 
 > The future simplest RDF library ever
 
----
+--
 
 - [Install](https://github.com/simplerdf/simplerdf#install)
 - [Quick tutorial](https://github.com/simplerdf/simplerdf#quick-tutorial)
@@ -12,7 +12,7 @@
 - [Faq](https://github.com/simplerdf/simplerdf#faq)
 - [Roadmap](https://github.com/simplerdf/simplerdf#roadmap)
 
----
+--
 
 ##### TL;DR example
 
