@@ -5,6 +5,7 @@
 > The future simplest RDF library ever
 
 RDF should be as easy as playing with JSON objects.
+
 Read the original blog post: [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
 
 ##### TL;DR example
@@ -18,11 +19,15 @@ me.name = 'Nicola'
 me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
 ```
 
+---
+
 - [Install](https://github.com/simplerdf/simplerdf#install)
 - [Quick tutorial](https://github.com/simplerdf/simplerdf#quick-tutorial)
 - [Limitations](https://github.com/simplerdf/simplerdf#limitations)
 - [Faq](https://github.com/simplerdf/simplerdf#faq)
 - [Roadmap](https://github.com/simplerdf/simplerdf#roadmap)
+
+---
 
 ## Install
 
