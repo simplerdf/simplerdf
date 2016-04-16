@@ -40,9 +40,9 @@ $ npm run build
 # This will generate `simplerdf.js` that you can load in your web application
 ```
 
-## Usage
+## Quick tutorial
 
-### 1) Create a SimpleRDF object
+### 1) Create a SimpleRDF object (easy peasy)
 
 ```javascript
 // The constructor takes 4 optional parameters:
@@ -56,33 +56,7 @@ var simple = require('simplerdf')
 var me = simple({
   'name': 'http://xmlns.com/foaf/0.1/name'
 })
-// Now we can access this property with
-me.name = 'Nicola'
-// or
-me['http://xmlns.com/foaf/0.1/name'] === 'Nicola'
-```
 
-Want to change/update the context that maps the graph with the JS object?
-
-```javascript
-me.context({
-  'name': 'http://xmlns.com/foaf/0.1/name',
-  'knows': {
-    '@id': 'http://xmlns.com/foaf/0.1/knows',
-    '@type': '@id',
-    '@array': true  // Please send a PR if you have a better way to do this
-  }
-})
-// now we can use me.knows (this will be an array!)
-```
-
-**Note**: If a property is meant to contain multiple data (hence it is an array), pass `@array: true` in the schema description!
-
-### 2) Use it!
-
-Now we can do any kind of action
-
-```javascript
 // You can directly set properties defined in your context
 me.name = 'Nicola'
 console.log(me.name)
@@ -98,13 +72,37 @@ me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
 console.log(me.name)
 ```
 
-## CRUD features (`.get` and `.save`)
+### 2) Using arrays (simple pimple)
+
+You want to enforce an property to be always an array? Pass `@array: true` in the schema description!
+
+```javascript
+me.context({
+  'name': 'http://xmlns.com/foaf/0.1/name',
+  'knows': {
+    '@id': 'http://xmlns.com/foaf/0.1/knows',
+    '@type': '@id',
+    '@array': true  // Please send a PR if you have a better way to do this
+  }
+})
+// now we can use me.knows (this will be an array!)
+
+me.knows = ['http://nicola.io/#me']
+me.knows.at(0)
+me.knows.map(function (object) { return 'hello' + object })
+me.knows.length
+```
+
+**Note**: You just want to do me.knows[0] ? We are implementing this at the moment, stay tuned!
+
+
+### 3) Use CRUD features `.get` and `.save` (crifty crafty)
 
 SimpleRDF supports some simple .get/.save. These respects the Linked Data Platform standard (have a look at [LDP](https://www.w3.org/TR/ldp/))
 
 ```javascript
 // This gets the iri specified in the constructor
-SimpleRDF(context, iri).get(function(err, g) {
+simple(context, iri).get(function(err, g) {
   console.log(g.name)
 })
 
@@ -118,6 +116,17 @@ g.save()
 SimpleRDF(context).get(iri1, function (err, g) {
   g.save(iri2, ..)
 })
+```
+
+
+### 4) Understanding `.child` (master jedi)
+
+Imagine the you set the `iri` of your graph to be `http://amazing-libraries.org` and you now would like to change the subject to let's say `http://amazing-libraries.org/simplerdf`, you can use `.child(iri)`. This will create a new SimpleRDF object.
+
+```
+var amazinglibraries = simple(context, 'http://amazing-libraries.org')
+var simplerdf = amazinglibraries.child('http://amazing-libraries.org/simplerdf')
+// done!
 ```
 
 ### Bonus: Full working example
