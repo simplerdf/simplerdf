@@ -23,6 +23,12 @@ me.name = 'Nicola'
 me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
 ```
 
+- [Install](https://github.com/simplerdf/simplerdf#install)
+- [Quick tutorial](https://github.com/simplerdf/simplerdf#quick-tutorial)
+- [Limitations](https://github.com/simplerdf/simplerdf#limitations)
+- [Faq](https://github.com/simplerdf/simplerdf#faq)
+- [Roadmap](https://github.com/simplerdf/simplerdf#roadmap)
+
 ## Install
 
 As a Node.js library
@@ -190,6 +196,17 @@ var simpleObject = SimpleRDF()
 // ... //
 simpleObject.graph().match(subj, pred, obj)
 ```
+
+## Roadmap
+
+Coming soon
+
+- [ ] Support of ES6 Proxy
+  - No need to specify context
+  - Use uri as context
+  - Simple array support (e.g. `me.friends[0]`)
+- [ ] Simple query language
+  - `me.friends[0].get()`
 
 ## Contributors
 
