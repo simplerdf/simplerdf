@@ -1,12 +1,13 @@
 # SimpleRDF
 
-[![Join the chat at https://gitter.im/nicola/simplerdf](https://badges.gitter.im/nicola/simplerdf.svg)](https://gitter.im/nicola/simplerdf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 <img src="https://github.com/simplerdf/simplerdf/blob/master/logo.png" width="200px">
 
-#### Attention: this library is _work in progress_
-
 > The future simplest RDF library ever
+
+##### Attention: this library is _work in progress_
+
+
+[![Join the chat at https://gitter.im/nicola/simplerdf](https://badges.gitter.im/nicola/simplerdf.svg)](https://gitter.im/nicola/simplerdf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 RDF should be as easy as playing with JSON objects. Getting and setting should be easy peasy.
 
