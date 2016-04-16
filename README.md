@@ -2,6 +2,8 @@
 
 [![Join the chat at https://gitter.im/nicola/simplerdf](https://badges.gitter.im/nicola/simplerdf.svg)](https://gitter.im/nicola/simplerdf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+![](https://github.com/simplerdf/simplerdf/blob/master/logo.png)
+
 #### Attention: this library is _work in progress_
 
 > The future simplest RDF library ever
