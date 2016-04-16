@@ -4,21 +4,6 @@
 
 > The future simplest RDF library ever
 
-RDF should be as easy as playing with JSON objects.
-
-Read the original blog post: [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
-
-##### TL;DR example
-```javascript
-var simple = require('simplerdf')
-var context = { 'name': 'http://xmlns.com/foaf/0.1/name' }
-var me = simple(context)
-// You can now edit the foaf name simply with
-me.name = 'Nicola'
-// as well as using the full predicate
-me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
-```
-
 ---
 
 - [Install](https://github.com/simplerdf/simplerdf#install)
@@ -28,6 +13,22 @@ me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
 - [Roadmap](https://github.com/simplerdf/simplerdf#roadmap)
 
 ---
+
+##### TL;DR example
+
+RDF should be as easy as playing with JSON objects.
+
+Read the original blog post: [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
+
+```javascript
+var simple = require('simplerdf')
+var context = { 'name': 'http://xmlns.com/foaf/0.1/name' }
+var me = simple(context)
+// You can now edit the foaf name simply with
+me.name = 'Nicola'
+// as well as using the full predicate
+me['http://xmlns.com/foaf/0.1/name'] = 'Nicola'
+```
 
 ## Install
 
