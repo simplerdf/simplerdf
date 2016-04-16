@@ -9,9 +9,7 @@
 
 [![Join the chat at https://gitter.im/nicola/simplerdf](https://badges.gitter.im/nicola/simplerdf.svg)](https://gitter.im/nicola/simplerdf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-RDF should be as easy as playing with JSON objects. Getting and setting should be easy peasy.
-
-Read the original blog post: [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
+RDF should be as easy as playing with JSON objects. Read the original blog post: [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
 
 ##### TL;DR example
 ```javascript
