@@ -1,4 +1,4 @@
-# SimpleRDF [![Join the chat at https://gitter.im/nicola/simplerdf](https://badges.gitter.im/nicola/simplerdf.svg)](https://gitter.im/nicola/simplerdf?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# SimpleRDF [![](https://img.shields.io/badge/chat-gitter-FC424C.svg?style=flat-square)](https://gitter.im/simplerdf/simplerdf) [![](https://img.shields.io/badge/project-SimpleRDF-FC424C.svg?style=flat-square)](https://github.com/simplerdf)
 
 <img src="https://github.com/simplerdf/simplerdf/blob/master/logo.png" width="200px">
 
