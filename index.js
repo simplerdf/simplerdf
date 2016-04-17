@@ -9,7 +9,7 @@ function SimpleRDF (context, iri, graph, store) {
 
   SimpleRDFLite.call(this, context, iri, graph)
 
-  this._store = store || new LdpStore()
+  this._store = SimpleRDF.store || store || new LdpStore()
 }
 
 util.inherits(SimpleRDF, SimpleRDFLite)
