@@ -1,6 +1,6 @@
 # SimpleRDF [![](https://img.shields.io/badge/chat-gitter-FC424C.svg?style=flat-square)](https://gitter.im/simplerdf/simplerdf) [![](https://img.shields.io/badge/project-SimpleRDF-FC424C.svg?style=flat-square)](https://github.com/simplerdf)
 
-<img src="https://github.com/simplerdf/simplerdf/blob/master/logo.png" width="200px">
+<img src="https://github.com/simplerdf/simplerdf/blob/master/logo.png" width="300px">
 
 > The future simplest RDF library ever
 
