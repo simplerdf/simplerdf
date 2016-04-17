@@ -256,6 +256,17 @@ describe('simplerdf', function () {
     })
   })
 
+  it('.get should be able to pass options to request handler', function (done) {
+    simple(blogContext, blogIri, null, blogStore).get({withCredentials: false}).then(function (blog) {
+      assert.equal(blog.name, 'simple blog')
+      assert.equal(blog.post.at(0).headline, 'first blog post')
+
+      done()
+    }).catch(function (error) {
+      done(error)
+    })
+  })
+
   it('.get should fetch an object from the store using the given IRI with Promise API', function (done) {
     simple(blogContext, null, null, blogStore).get(blogIri).then(function (blog) {
       assert.equal(blog.name, 'simple blog')
