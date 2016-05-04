@@ -1,6 +1,80 @@
-var rdf = require('rdf-ext')
-var SimpleArray = require('./lib/array')
-var SimpleContext = require('./lib/context')
+'use strict'
+
+const rdf = require('rdf-ext')
+const SimpleArray = require('./lib/array')
+const SimpleContext = require('./lib/context')
+
+class SimpleRDF {
+  constructor (context, iri, graph) {
+    this._iri = buildIri(iri)
+    this._objects = {}
+
+    this.context(context)
+    this.graph(graph || rdf.createGraph())
+  }
+
+  toString () {
+    return this._graph.toString()
+  }
+
+  context (context) {
+    if (context) {
+      this._context = context instanceof SimpleContext ? context : new SimpleContext(context)
+
+      this._context.descriptions().forEach((description) => {
+        // access values with full IRI
+        addProperty.call(
+          this,
+          description.predicate,
+          description.predicate,
+          description.options)
+
+        // access values with short property
+        addProperty.call(
+          this,
+          description.property,
+          description.predicate,
+          description.options)
+      })
+    }
+
+    return this._context
+  }
+
+  iri (iri) {
+    if (iri) {
+      iri = buildIri(iri)
+
+      updateSubject(this._graph, this._iri, iri)
+      updateObject(this._graph, this._iri, iri)
+
+      this._iri = iri
+    }
+
+    return this._iri
+  }
+
+  graph (graph) {
+    if (graph) {
+      this._graph = graph
+
+      this._graph.match(this._iri).forEach((triple) => {
+        let predicate = triple.predicate.toString()
+        let descriptor = Object.getOwnPropertyDescriptor(this, predicate)
+
+        if (!descriptor) {
+          addProperty.call(this, triple.predicate.toString(), predicate)
+        }
+      })
+    }
+
+    return this._graph
+  }
+
+  child (iri) {
+    return new SimpleRDF(this._context, iri, this._graph)
+  }
+}
 
 function buildIri (iri) {
   if (typeof iri === 'string') {
@@ -18,7 +92,7 @@ function updateSubject (graph, oldSubject, newSubject) {
 }
 
 function updateObject (graph, oldObject, newObject) {
-  graph.match(null, null, oldObject).forEach(function (triple) {
+  graph.match(null, null, oldObject).forEach((triple) => {
     graph.remove(triple)
     graph.add(rdf.createTriple(triple.subject, triple.predicate, newObject))
   })
@@ -29,7 +103,7 @@ function addValues (self, predicate, options, values) {
     values = [values]
   }
 
-  values.forEach(function (value) {
+  values.forEach((value) => {
     if (typeof value === 'string') {
       if (options.namedNode) {
         self._graph.add(rdf.createTriple(self._iri, predicate, rdf.createNamedNode(value)))
@@ -60,7 +134,7 @@ function addValues (self, predicate, options, values) {
 }
 
 function getValuesArray (self, predicate, options) {
-  return self._graph.match(self._iri, predicate).map(function (triple) {
+  return self._graph.match(self._iri, predicate).map((triple) => {
     if (triple.object.interfaceName === 'BlankNode') {
       return self.child(triple.object)
     } else {
@@ -74,7 +148,7 @@ function getValues (self, predicate, options) {
     return self._objects[predicate]
   }
 
-  var values = getValuesArray(self, predicate, options)
+  let values = getValuesArray(self, predicate, options)
 
   if (!options.array) {
     values = values.shift()
@@ -101,87 +175,22 @@ function addProperty (property, predicate, options) {
 
   Object.defineProperty(this, property, {
     configurable: true,
-    get: function () {
+    get: () => {
       return getValues(this, predicate, options)
     },
-    set: function (values) {
+    set: (values) => {
       removeValues(this, predicate, options)
       addValues(this, predicate, options, values)
     }
   })
 }
 
-function SimpleRDF (context, iri, graph) {
-  if (!(this instanceof SimpleRDF)) {
-    return new SimpleRDF(context, iri, graph)
-  }
-
-  this._iri = buildIri(iri)
-  this._objects = {}
-
-  this.context(context)
-  this.graph(graph || rdf.createGraph())
+module.exports = function (context, iri, graph, store) {
+  return new SimpleRDF(context, iri, graph, store)
 }
 
-SimpleRDF.prototype.toString = function () {
-  return this._graph.toString()
-}
-
-SimpleRDF.prototype.context = function (context) {
-  var self = this
-
-  if (context) {
-    self._context = context instanceof SimpleContext ? context : new SimpleContext(context)
-
-    self._context.descriptions().forEach(function (description) {
-      // access values with full IRI
-      addProperty.call(self, description.predicate, description.predicate, description.options)
-
-      // access values with short property
-      addProperty.call(self, description.property, description.predicate, description.options)
-    })
-  }
-
-  return self._context
-}
-
-SimpleRDF.prototype.iri = function (iri) {
-  if (iri) {
-    iri = buildIri(iri)
-
-    updateSubject(this._graph, this._iri, iri)
-    updateObject(this._graph, this._iri, iri)
-
-    this._iri = iri
-  }
-
-  return this._iri
-}
-
-SimpleRDF.prototype.graph = function (graph) {
-  var self = this
-
-  if (graph) {
-    self._graph = graph
-
-    self._graph.match(self._iri).forEach(function (triple) {
-      var descriptor = Object.getOwnPropertyDescriptor(self, triple.predicate.toString())
-
-      if (!descriptor) {
-        addProperty.call(self, triple.predicate.toString(), triple.predicate.toString())
-      }
-    })
-  }
-
-  return self._graph
-}
-
-SimpleRDF.prototype.child = function (iri) {
-  return new SimpleRDF(this._context, iri, this._graph)
-}
-
-SimpleRDF.isArray = function (obj) {
+module.exports.isArray = (obj) => {
   return obj instanceof SimpleArray
 }
 
-module.exports = SimpleRDF
+module.exports.SimpleRDF = SimpleRDF

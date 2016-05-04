@@ -1,9 +1,10 @@
+'use strict'
 /* global before, describe, it */
 
-var assert = require('assert')
-var rdf = require('rdf-ext')
-var simple = require('../')
-var SimpleArray = require('../lib/array')
+const assert = require('assert')
+const rdf = require('rdf-ext')
+const simple = require('../')
+const SimpleArray = require('../lib/array')
 
 var blogContext = {
   about: 'http://schema.org/about',
@@ -43,174 +44,174 @@ var blogGraph = rdf.createGraph([
 
 var blogStore = rdf.createStore()
 
-describe('simplerdf', function () {
-  before(function (done) {
-    blogStore.add('http://example.org/blog', blogGraph).then(function () {
+describe('simplerdf', () => {
+  before((done) => {
+    blogStore.add('http://example.org/blog', blogGraph).then(() => {
       done()
-    }).catch(function (error) {
+    }).catch((error) => {
       done(error)
     })
   })
 
-  it('constructor should import context', function () {
-    var blog = simple(blogContext)
+  it('constructor should import context', () => {
+    let blog = simple(blogContext)
 
     assert.notEqual(Object.getOwnPropertyDescriptor(blog, 'name'), undefined)
     assert.notEqual(Object.getOwnPropertyDescriptor(blog, 'post'), undefined)
   })
 
-  it('constructor should create BlankNode subject if none was given', function () {
-    var blog = simple(blogContext)
+  it('constructor should create BlankNode subject if none was given', () => {
+    let blog = simple(blogContext)
 
     assert.equal(blog._iri.interfaceName, 'BlankNode')
   })
 
-  it('constructor should use existing NamedNode subject if one was given', function () {
-    var iri = rdf.createNamedNode(blogIri)
-    var blog = simple(blogContext, iri)
+  it('constructor should use existing NamedNode subject if one was given', () => {
+    let iri = rdf.createNamedNode(blogIri)
+    let blog = simple(blogContext, iri)
 
     assert(blog._iri.equals(iri))
   })
 
-  it('constructor should use existing BlankNode subject if one was given', function () {
-    var iri = rdf.createBlankNode()
-    var blog = simple(blogContext, iri)
+  it('constructor should use existing BlankNode subject if one was given', () => {
+    let iri = rdf.createBlankNode()
+    let blog = simple(blogContext, iri)
 
     assert(blog._iri.equals(iri))
   })
 
-  it('constructor should create a NamedNode subject if a String was given', function () {
-    var iri = rdf.createNamedNode(blogIri)
-    var blog = simple(blogContext, blogIri)
+  it('constructor should create a NamedNode subject if a String was given', () => {
+    let iri = rdf.createNamedNode(blogIri)
+    let blog = simple(blogContext, blogIri)
 
     assert(blog._iri.equals(iri))
   })
 
-  it('constructor should use an existing graph if one was given', function () {
-    var blog = simple(blogContext, blogIri, blogGraph)
+  it('constructor should use an existing graph if one was given', () => {
+    let blog = simple(blogContext, blogIri, blogGraph)
 
     assert(blogGraph.equals(blog._graph))
   })
 
-  it('constructor should create properties for imported graph predicates', function () {
-    var blog = simple(null, blogIri, blogGraph)
+  it('constructor should create properties for imported graph predicates', () => {
+    let blog = simple(null, blogIri, blogGraph)
 
     assert.equal(blog['http://schema.org/name'], 'simple blog')
   })
 
-  it('.child should create a child object with a BlankNode subject if none was given', function () {
-    var blog = simple(blogContext)
-    var post = blog.child()
+  it('.child should create a child object with a BlankNode subject if none was given', () => {
+    let blog = simple(blogContext)
+    let post = blog.child()
 
-    assert(post instanceof simple)
+    assert(post instanceof simple.SimpleRDF)
     assert.equal(post._iri.interfaceName, 'BlankNode')
   })
 
-  it('.child should create a child object with a NamedNode subject if a String was given', function () {
-    var blog = simple(blogContext)
-    var post = blog.child('http://example.org/post-1')
+  it('.child should create a child object with a NamedNode subject if a String was given', () => {
+    let blog = simple(blogContext)
+    let post = blog.child('http://example.org/post-1')
 
     assert(post._iri.equals('http://example.org/post-1'))
   })
 
-  it('getter should support String values', function () {
-    var blog = simple(blogContext, blogIri, blogGraph)
-    var name = blog.name
+  it('getter should support String values', () => {
+    let blog = simple(blogContext, blogIri, blogGraph)
+    let name = blog.name
 
     assert.equal(name, 'simple blog')
   })
 
-  it('getter should support Array values', function () {
-    var blog = simple(blogContext, blogIri, blogGraph)
-    var posts = blog.post
+  it('getter should support Array values', () => {
+    let blog = simple(blogContext, blogIri, blogGraph)
+    let posts = blog.post
 
     assert(simple.isArray(posts))
   })
 
-  it('setter should support IRI values', function () {
-    var blog = simple(blogContext)
-    var value = 'http://example.org/provider'
+  it('setter should support IRI values', () => {
+    let blog = simple(blogContext)
+    let value = 'http://example.org/provider'
 
     blog.provider = value
 
-    var node = blog._graph.match(null, 'http://schema.org/provider').toArray().shift().object
+    let node = blog._graph.match(null, 'http://schema.org/provider').toArray().shift().object
 
     assert.equal(node.interfaceName, 'NamedNode')
     assert.equal(node.toString(), value)
   })
 
-  it('setter should support String values', function () {
-    var blog = simple(blogContext)
+  it('setter should support String values', () => {
+    let blog = simple(blogContext)
 
     blog.name = 'simple blog'
 
     assert.equal(blog._graph.match(null, 'http://schema.org/name').toArray().shift().object.toString(), 'simple blog')
   })
 
-  it('setter should support Object values', function () {
-    var blog = simple(blogContext)
-    var project = blog.child()
+  it('setter should support Object values', () => {
+    let blog = simple(blogContext)
+    let project = blog.child()
 
     blog.about = project
 
     assert.equal(blog._graph.match(blog._iri, 'http://schema.org/about', project._iri).length, 1)
   })
 
-  it('setter should support Node values', function () {
-    var blog = simple(blogContext)
-    var project = rdf.createNamedNode('http://example.org/project')
+  it('setter should support Node values', () => {
+    let blog = simple(blogContext)
+    let project = rdf.createNamedNode('http://example.org/project')
 
     blog.about = project
 
     assert.equal(blog._graph.match(blog._iri, 'http://schema.org/about', project).length, 1)
   })
 
-  it('setter should support boolean values', function () {
-    var blog = simple(blogContext)
+  it('setter should support boolean values', () => {
+    let blog = simple(blogContext)
 
     blog.isFamilyFriendly = true
 
-    var isFamilyFriendly = blog._graph.match(null, 'http://schema.org/isFamilyFriendly').toArray().shift().object
+    let isFamilyFriendly = blog._graph.match(null, 'http://schema.org/isFamilyFriendly').toArray().shift().object
 
     assert(isFamilyFriendly)
     assert.equal(isFamilyFriendly.nominalValue, true)
     assert(isFamilyFriendly.datatype.equals('http://www.w3.org/2001/XMLSchema#boolean'))
   })
 
-  it('setter should support number values', function () {
-    var post = simple(blogContext)
+  it('setter should support number values', () => {
+    let post = simple(blogContext)
 
     post.version = 0.1
 
-    var version = post._graph.match(null, 'http://schema.org/version').toArray().shift().object
+    let version = post._graph.match(null, 'http://schema.org/version').toArray().shift().object
 
     assert(version)
     assert.equal(version.nominalValue, 0.1)
     assert(version.datatype.equals('http://www.w3.org/2001/XMLSchema#double'))
   })
 
-  it('setter should support Array values', function () {
-    var blog = simple(blogContext)
-    var post = blog.child()
+  it('setter should support Array values', () => {
+    let blog = simple(blogContext)
+    let post = blog.child()
 
     blog.post = [post]
 
     assert(blog._graph.match(null, 'http://schema.org/post').toArray().shift().object.equals(post._iri))
   })
 
-  it('getter should support Array access', function () {
-    var blog = simple(blogContext)
-    var post = blog.child()
+  it('getter should support Array access', () => {
+    let blog = simple(blogContext)
+    let post = blog.child()
 
     blog.post.push(post)
 
     assert(blog._graph.match(null, 'http://schema.org/post').toArray().shift().object.equals(post._iri))
   })
 
-  it('.iri should do subject update inc. subject and object updates in graph', function () {
-    var blog = simple(blogContext, blogIri)
-    var post = blog.child()
-    var postIri = 'http://example.org/post-1'
+  it('.iri should do subject update inc. subject and object updates in graph', () => {
+    let blog = simple(blogContext, blogIri)
+    let post = blog.child()
+    let postIri = 'http://example.org/post-1'
 
     post.headline = 'headline'
     blog.post = [post]
@@ -220,19 +221,19 @@ describe('simplerdf', function () {
     assert(blog._graph.match(null, 'http://schema.org/headline').toArray().shift().subject.equals(postIri))
   })
 
-  it('.toString should return the graph as N-Triples', function () {
-    var blog = simple(blogContext, blogIri)
-    var postIri = 'http://example.org/post-1'
-    var post = blog.child(postIri)
+  it('.toString should return the graph as N-Triples', () => {
+    let blog = simple(blogContext, blogIri)
+    let postIri = 'http://example.org/post-1'
+    let post = blog.child(postIri)
 
     blog.post = [post]
 
     assert.equal(blog.toString(), '<http://example.org/blog> <http://schema.org/post> <http://example.org/post-1> .')
   })
 
-  it('should keep assigned objects', function () {
-    var blog = simple(blogContext, blogIri)
-    var provider = blog.child()
+  it('should keep assigned objects', () => {
+    let blog = simple(blogContext, blogIri)
+    let provider = blog.child()
 
     provider.name = 'test'
     provider.getName = function () {
@@ -245,49 +246,49 @@ describe('simplerdf', function () {
     assert.equal(blog.provider.getName(), 'test')
   })
 
-  it('.get should fetch an object from the store with Promise API', function (done) {
-    simple(blogContext, blogIri, null, blogStore).get().then(function (blog) {
+  it('.get should fetch an object from the store with Promise API', (done) => {
+    simple(blogContext, blogIri, null, blogStore).get().then((blog) => {
       assert.equal(blog.name, 'simple blog')
       assert.equal(blog.post.at(0).headline, 'first blog post')
 
       done()
-    }).catch(function (error) {
+    }).catch((error) => {
       done(error)
     })
   })
 
-  it('.get should be able to pass options to request handler', function (done) {
-    simple(blogContext, blogIri, null, blogStore).get({withCredentials: false}).then(function (blog) {
+  it('.get should be able to pass options to request handler', (done) => {
+    simple(blogContext, blogIri, null, blogStore).get({withCredentials: false}).then((blog) => {
       assert.equal(blog.name, 'simple blog')
       assert.equal(blog.post.at(0).headline, 'first blog post')
 
       done()
-    }).catch(function (error) {
+    }).catch((error) => {
       done(error)
     })
   })
 
-  it('.get should fetch an object from the store using the given IRI with Promise API', function (done) {
-    simple(blogContext, null, null, blogStore).get(blogIri).then(function (blog) {
+  it('.get should fetch an object from the store using the given IRI with Promise API', (done) => {
+    simple(blogContext, null, null, blogStore).get(blogIri).then((blog) => {
       assert.equal(blog.name, 'simple blog')
       assert.equal(blog.post.at(0).headline, 'first blog post')
 
       done()
-    }).catch(function (error) {
+    }).catch((error) => {
       done(error)
     })
   })
 
-  it('.save should store an object using the store with Promise API', function (done) {
-    var blog = simple(blogContext, blogIri, blogGraph.clone(), blogStore)
-    var blogCloneIri = 'http://example.org/blog-clone'
+  it('.save should store an object using the store with Promise API', (done) => {
+    let blog = simple(blogContext, blogIri, blogGraph.clone(), blogStore)
+    let blogCloneIri = 'http://example.org/blog-clone'
 
     blog.iri(blogCloneIri)
-    blog.save().then(function (blogClone) {
+    blog.save().then((blogClone) => {
       return blogStore.graph(blogCloneIri)
-    }).then(function (graph) {
+    }).then((graph) => {
       // patch graph ...
-      graph.match(blogCloneIri).forEach(function (triple) {
+      graph.match(blogCloneIri).forEach((triple) => {
         graph.remove(triple)
         graph.add(rdf.createTriple(rdf.createNamedNode(blogIri), triple.predicate, triple.object))
       })
@@ -296,20 +297,20 @@ describe('simplerdf', function () {
       assert(graph.equals(blogGraph))
 
       done()
-    }).catch(function (error) {
+    }).catch((error) => {
       done(error)
     })
   })
 
-  it('.save should store an object using the store with Promise API', function (done) {
-    var blog = simple(blogContext, blogIri, blogGraph.clone(), blogStore)
-    var blogCloneIri = 'http://example.org/blog-clone'
+  it('.save should store an object using the store with Promise API', (done) => {
+    let blog = simple(blogContext, blogIri, blogGraph.clone(), blogStore)
+    let blogCloneIri = 'http://example.org/blog-clone'
 
-    blog.save(blogCloneIri).then(function (blogClone) {
+    blog.save(blogCloneIri).then((blogClone) => {
       return blogStore.graph(blogCloneIri)
-    }).then(function (graph) {
+    }).then((graph) => {
       // patch graph ...
-      graph.match(blogCloneIri).forEach(function (triple) {
+      graph.match(blogCloneIri).forEach((triple) => {
         graph.remove(triple)
         graph.add(rdf.createTriple(rdf.createNamedNode(blogIri), triple.predicate, triple.object))
       })
@@ -318,19 +319,19 @@ describe('simplerdf', function () {
       assert(graph.equals(blogGraph))
 
       done()
-    }).catch(function (error) {
+    }).catch((error) => {
       done(error)
     })
   })
 })
 
-describe('simplearray', function () {
-  it('constructor should init all member variables', function () {
-    var addValue = function () {}
-    var getValue = function () {}
-    var removeValue = function () {}
+describe('simplearray', () => {
+  it('constructor should init all member variables', () => {
+    let addValue = () => {}
+    let getValue = () => {}
+    let removeValue = () => {}
 
-    var array = new SimpleArray(addValue, getValue, removeValue)
+    let array = new SimpleArray(addValue, getValue, removeValue)
 
     assert.equal(array._addValue, addValue)
     assert.equal(array._getValue, getValue)
@@ -338,12 +339,12 @@ describe('simplearray', function () {
     assert(Array.isArray(array._array))
   })
 
-  it('.at should handle read access for the array', function () {
-    var addValue = function () {}
-    var getValue = function () {}
-    var removeValue = function () {}
+  it('.at should handle read access for the array', () => {
+    let addValue = () => {}
+    let getValue = () => {}
+    let removeValue = () => {}
 
-    var array = new SimpleArray(addValue, getValue, removeValue)
+    let array = new SimpleArray(addValue, getValue, removeValue)
 
     array._array = [0, 1, 2]
 
@@ -352,19 +353,19 @@ describe('simplearray', function () {
     assert.equal(array.at(2), 2)
   })
 
-  it('.at should handle write access for the array', function () {
-    var addSequence = [0, 1, 2, 3]
-    var removeSequence = [1]
+  it('.at should handle write access for the array', () => {
+    let addSequence = [0, 1, 2, 3]
+    let removeSequence = [1]
 
-    var addValue = function (value) {
+    let addValue = (value) => {
       assert.equal(value, addSequence.shift())
     }
-    var getValue = function () {}
-    var removeValue = function (value) {
+    let getValue = () => {}
+    let removeValue = (value) => {
       assert.equal(value, removeSequence.shift())
     }
 
-    var array = new SimpleArray(addValue, getValue, removeValue)
+    let array = new SimpleArray(addValue, getValue, removeValue)
 
     array.at(0, 0)
     array.at(1, 1)
@@ -379,14 +380,14 @@ describe('simplearray', function () {
     assert.deepEqual(removeSequence, [])
   })
 
-  it('.forEach should be supported', function () {
-    var valueSequence = [0, 1, 2]
+  it('.forEach should be supported', () => {
+    let valueSequence = [0, 1, 2]
 
-    var addValue = function () {}
-    var getValue = function () {}
-    var removeValue = function () {}
+    let addValue = () => {}
+    let getValue = () => {}
+    let removeValue = () => {}
 
-    var array = new SimpleArray(addValue, getValue, removeValue)
+    let array = new SimpleArray(addValue, getValue, removeValue)
 
     array._array = [0, 1, 2]
 
@@ -398,16 +399,16 @@ describe('simplearray', function () {
     assert.deepEqual(valueSequence, [])
   })
 
-  it('.push should be supported', function () {
-    var addSequence = [0, 1, 2]
+  it('.push should be supported', () => {
+    let addSequence = [0, 1, 2]
 
-    var addValue = function (value) {
+    let addValue = (value) => {
       assert.equal(value, addSequence.shift())
     }
-    var getValue = function () {}
-    var removeValue = function () {}
+    let getValue = () => {}
+    let removeValue = () => {}
 
-    var array = new SimpleArray(addValue, getValue, removeValue)
+    let array = new SimpleArray(addValue, getValue, removeValue)
 
     array.push(0)
     array.push(1)
