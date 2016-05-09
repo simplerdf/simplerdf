@@ -20,7 +20,8 @@ var blogContext = {
   },
   headline: 'http://schema.org/headline',
   content: 'http://schema.org/content',
-  version: 'http://schema.org/version'
+  version: 'http://schema.org/version',
+  sameAs: 'http://schema.org/sameAs'
 }
 
 var blogIri = 'http://example.org/blog'
@@ -244,6 +245,22 @@ describe('simplerdf', () => {
 
     assert.equal(blog.provider.name, 'test')
     assert.equal(blog.provider.getName(), 'test')
+  })
+
+  it('should use a SimpleRDF object to handle NamedNodes', () => {
+    let blog = simple(blogContext, blogIri)
+
+    blog.sameAs = rdf.createNamedNode(blogIri + '/theSame')
+
+    assert(blog.sameAs instanceof simple.SimpleRDF)
+  })
+
+  it('should use a SimpleRDF object to handle BlankNodes', () => {
+    let blog = simple(blogContext, blogIri)
+
+    blog.sameAs = rdf.createBlankNode()
+
+    assert(blog.sameAs instanceof simple.SimpleRDF)
   })
 
   it('.get should fetch an object from the store with Promise API', (done) => {
