@@ -18,11 +18,25 @@
   },
   "homepage": "https://github.com/nicola/simplerdf",
   "devDependencies": {
+    "babel-preset-es2015": "^6.9.0",
+    "babelify": "^7.3.0",
     "browserify": "^12.0.1",
     "mocha": "^2.4.5"
   },
   "dependencies": {
     "rdf-ext": "^0.3.0",
     "rdf-store-ldp": "^0.3.1"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
   }
 }
