@@ -6,8 +6,9 @@
   "jsnext:main": "index.js",
   "scripts": {
     "test": "mocha",
-    "build": "mkdir -p dist && browserify -e ./ -t babelify --standalone SimpleRDF > dist/simplerdf.js",
-    "minify": "mkdir -p dist && browserify -e ./ -t babelify --standalone SimpleRDF | uglifyjs -c > dist/simplerdf.min.js",
+    "build": "mkdir -p dist && babel ./ --ignore node_modules --out-file dist/simplerdf.js",
+    "build-browser": "mkdir -p dist && browserify -e ./ -t babelify --standalone SimpleRDF > dist/simplerdf.browser.js",
+    "minify": "mkdir -p dist && browserify -e ./ -t babelify --standalone SimpleRDF | uglifyjs -c > dist/simplerdf.browser.min.js",
     "prepublish": "npm run build"
   },
   "repository": {
@@ -21,6 +22,7 @@
   },
   "homepage": "https://github.com/nicola/simplerdf",
   "devDependencies": {
+    "babel-cli": "^6.9.0",
     "babel-preset-es2015": "^6.9.0",
     "babelify": "^7.3.0",
     "browserify": "^12.0.1",
