@@ -26,17 +26,5 @@
   "dependencies": {
     "rdf-ext": "^0.3.0",
     "rdf-store-ldp": "^0.3.1"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "presets": [
-            "es2015"
-          ]
-        }
-      ]
-    ]
   }
 }
