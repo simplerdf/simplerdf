@@ -5,7 +5,7 @@
   "main": "dist/simplerdf.js",
   "jsnext:main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "npm run build && mocha",
     "build": "mkdir -p dist && babel ./ --ignore node_modules --out-file dist/simplerdf.js",
     "build-browser": "mkdir -p dist && browserify -e ./ -t babelify --standalone SimpleRDF > dist/simplerdf.browser.js",
     "minify": "mkdir -p dist && browserify -e ./ -t babelify --standalone SimpleRDF | uglifyjs -c > dist/simplerdf.browser.min.js",
