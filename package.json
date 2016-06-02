@@ -6,7 +6,7 @@
   "jsnext:main": "index.js",
   "scripts": {
     "test": "npm run build && mocha",
-    "build": "rm -rf dist && mkdir dist && babel --ignore node_modules ./ -d dist",
+    "build": "mkdir -p dist && babel --ignore node_modules,dist,examples ./ -d dist",
     "build-browser": "mkdir -p dist && browserify -e ./ -t babelify --standalone SimpleRDF > dist/simplerdf.browser.js",
     "minify": "mkdir -p dist && browserify -e ./ -t babelify --standalone SimpleRDF | uglifyjs -c > dist/simplerdf.browser.min.js",
     "prepublish": "npm run build"
