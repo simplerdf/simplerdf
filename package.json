@@ -4,9 +4,13 @@
   "description": "RDF as easy as js objects",
   "main": "dist/simplerdf.js",
   "jsnext:main": "index.js",
+  "babel": {
+    "presets": ["es2015"],
+    "ignore": [ "node_modules" ]
+  },
   "scripts": {
     "test": "npm run build && mocha",
-    "build": "mkdir -p dist && babel ./ --ignore node_modules --out-file dist/simplerdf.js",
+    "build": "mkdir -p dist && babel ./ -d dist",
     "build-browser": "mkdir -p dist && browserify -e ./ -t babelify --standalone SimpleRDF > dist/simplerdf.browser.js",
     "minify": "mkdir -p dist && browserify -e ./ -t babelify --standalone SimpleRDF | uglifyjs -c > dist/simplerdf.browser.min.js",
     "prepublish": "npm run build"
