@@ -150,8 +150,8 @@ function getValues (self, predicate, options) {
 
   let values = getValuesArray(self, predicate, options)
 
-  if (!options.array) {
-    values = values.shift()
+  if (!options.array && values.length <= 1) {
+    values = self._objects[predicate] = values.shift()
   } else {
     values = self._objects[predicate] = new SimpleArray(
         addValues.bind(null, self, predicate, options),
