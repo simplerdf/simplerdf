@@ -115,7 +115,11 @@ function addValues (self, predicate, options, values) {
         self._graph.add(rdf.createTriple(self._iri, predicate, value))
       } else {
         self._graph.add(rdf.createTriple(self._iri, predicate, value._iri))
-        self._objects[predicate] = value
+
+        // don't cache array values, because we cache the complete array
+        if (!options.array) {
+          self._objects[predicate] = value
+        }
       }
     } else if (typeof value === 'boolean') {
       self._graph.add(rdf.createTriple(

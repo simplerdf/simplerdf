@@ -3,7 +3,7 @@
 
 const assert = require('assert')
 const rdf = require('rdf-ext')
-const simple = require('../')
+const simple = require('../index')
 const SimpleArray = require('../lib/array')
 
 var blogContext = {
@@ -225,6 +225,15 @@ describe('simplerdf', () => {
     blog.post = [post]
 
     assert(blog._graph.match(null, 'http://schema.org/post').toArray().shift().object.equals(post._iri))
+  })
+
+  it('setter should support Array access', () => {
+    let blog = simple(blogContext)
+    let post = blog.child()
+
+    blog.post.push(post)
+
+    assert(typeof blog.post.push === 'function')
   })
 
   it('getter should support Array access', () => {
