@@ -115,7 +115,11 @@ function addValues (self, predicate, options, values) {
         self._graph.add(rdf.createTriple(self._iri, predicate, value))
       } else {
         self._graph.add(rdf.createTriple(self._iri, predicate, value._iri))
-        self._objects[predicate] = value
+
+        // don't cache array values, because we cache the complete array
+        if (!options.array) {
+          self._objects[predicate] = value
+        }
       }
     } else if (typeof value === 'boolean') {
       self._graph.add(rdf.createTriple(
@@ -150,8 +154,8 @@ function getValues (self, predicate, options) {
 
   let values = getValuesArray(self, predicate, options)
 
-  if (!options.array) {
-    values = values.shift()
+  if (!options.array && values.length <= 1) {
+    values = self._objects[predicate] = values.shift()
   } else {
     values = self._objects[predicate] = new SimpleArray(
         addValues.bind(null, self, predicate, options),

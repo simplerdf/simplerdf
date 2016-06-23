@@ -3,7 +3,7 @@
 
 const assert = require('assert')
 const rdf = require('rdf-ext')
-const simple = require('../')
+const simple = require('../index')
 const SimpleArray = require('../lib/array')
 
 var blogContext = {
@@ -129,6 +129,33 @@ describe('simplerdf', () => {
     assert(simple.isArray(posts))
   })
 
+  it('getter should use Arrays if there are multiple values', () => {
+    let graph = blogGraph.clone()
+
+    graph.add(rdf.createTriple(
+      rdf.createNamedNode(blogIri),
+      rdf.createNamedNode('http://schema.org/name'),
+      rdf.createLiteral('simple blog second name')))
+
+    let blog = simple(blogContext, blogIri, graph)
+
+    let names = blog.name
+
+    assert(simple.isArray(names))
+  })
+
+  it('getter should cache values', () => {
+    let graph = blogGraph.clone()
+
+    let blog = simple(blogContext, blogIri, graph)
+
+    assert(!('http://schema.org/name' in blog._objects))
+
+    let names = blog.name
+
+    assert(('http://schema.org/name' in blog._objects))
+  })
+
   it('setter should support IRI values', () => {
     let blog = simple(blogContext)
     let value = 'http://example.org/provider'
@@ -198,6 +225,15 @@ describe('simplerdf', () => {
     blog.post = [post]
 
     assert(blog._graph.match(null, 'http://schema.org/post').toArray().shift().object.equals(post._iri))
+  })
+
+  it('setter should support Array access', () => {
+    let blog = simple(blogContext)
+    let post = blog.child()
+
+    blog.post.push(post)
+
+    assert(typeof blog.post.push === 'function')
   })
 
   it('getter should support Array access', () => {
