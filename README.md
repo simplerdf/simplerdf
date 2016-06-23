@@ -136,6 +136,11 @@ var simplerdf = amazinglibraries.child('http://amazing-libraries.org/simplerdf')
 // done!
 ```
 
+### 5) Understanding `.graph()`, `.iri()` (wicky wacky)
+
+Both these functions are setters if passed with a parameter and getters if no parameter is found. `.graph()` will give you access to an rdf-ext graph, `.graph(newGraph)` will replace the current graph with the new graph. `.iri()` will give you the `iri` that is the subject of your simple object. Finally `.iri(newIri)` will replace your subject
+
+
 ### Bonus: Full working example
 
 See other [working examples](https://github.com/nicola/simplerdf/tree/master/examples)
