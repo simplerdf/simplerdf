@@ -140,7 +140,11 @@ function addValues (self, predicate, options, values) {
 function getValuesArray (self, predicate, options) {
   return self._graph.match(self._iri, predicate).map((triple) => {
     if (triple.object.interfaceName !== 'Literal') {
-      return self.child(triple.object)
+      if (options.namedNode) {
+        return triple.object.toString()
+      } else {
+        return self.child(triple.object)
+      }
     } else {
       return triple.object.toString()
     }
