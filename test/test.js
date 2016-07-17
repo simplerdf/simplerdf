@@ -3,7 +3,7 @@
 
 const assert = require('assert')
 const rdf = require('rdf-ext')
-const simple = require('../')
+const simple = require('../index')
 const SimpleArray = require('../lib/array')
 
 var blogContext = {
@@ -216,6 +216,19 @@ describe('simplerdf', () => {
     blog.post.push(post)
 
     assert(blog._graph.match(null, 'http://schema.org/post').toArray().shift().object.equals(post._iri))
+  })
+
+  it('getter should support IRI strings', () => {
+    let blogGraph = rdf.createGraph()
+    let blog = simple(blogContext, null, blogGraph)
+
+    blogGraph.add(rdf.createTriple(
+      blog.iri(),
+      rdf.createNamedNode('http://schema.org/provider'),
+      rdf.createNamedNode('http://example.org/provider')
+    ))
+
+    assert.equal(blog.provider, 'http://example.org/provider')
   })
 
   it('.iri should do subject update inc. subject and object updates in graph', () => {
