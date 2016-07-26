@@ -81,7 +81,7 @@ console.log(me.name)
 
 ### 2) Using arrays (simple pimple)
 
-You want to enforce an property to be always an array? Pass `@array: true` in the schema description!
+You want to enforce an property to be always an array? Pass `'@container': '@set'` in the schema description!
 
 ```javascript
 me.context({
@@ -89,7 +89,7 @@ me.context({
   'knows': {
     '@id': 'http://xmlns.com/foaf/0.1/knows',
     '@type': '@id',
-    '@array': true  // Please send a PR if you have a better way to do this
+    '@container': '@set'
   }
 })
 // now we can use me.knows (this will be an array!)

@@ -4,7 +4,7 @@ var blogContext = {
   name: 'http://schema.org/name',
   post: {
     '@id': 'http://schema.org/post',
-    '@array': true
+    '@container': '@set'
   },
   headline: 'http://schema.org/headline',
   content: 'http://schema.org/content'

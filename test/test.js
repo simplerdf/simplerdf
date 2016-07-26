@@ -16,7 +16,7 @@ var blogContext = {
   isFamilyFriendly: 'http://schema.org/isFamilyFriendly',
   post: {
     '@id': 'http://schema.org/post',
-    '@array': true
+    '@container': '@set'
   },
   headline: 'http://schema.org/headline',
   content: 'http://schema.org/content',
