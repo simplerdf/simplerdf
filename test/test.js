@@ -129,6 +129,33 @@ describe('simplerdf', () => {
     assert(simple.isArray(posts))
   })
 
+  it('getter should use Arrays if there are multiple values', () => {
+    let graph = blogGraph.clone()
+
+    graph.add(rdf.createTriple(
+      rdf.createNamedNode(blogIri),
+      rdf.createNamedNode('http://schema.org/name'),
+      rdf.createLiteral('simple blog second name')))
+
+    let blog = simple(blogContext, blogIri, graph)
+
+    let names = blog.name
+
+    assert(simple.isArray(names))
+  })
+
+  it('getter should cache values', () => {
+    let graph = blogGraph.clone()
+
+    let blog = simple(blogContext, blogIri, graph)
+
+    assert(!('http://schema.org/name' in blog._objects))
+
+    let names = blog.name
+
+    assert(('http://schema.org/name' in blog._objects))
+  })
+
   it('setter should support IRI values', () => {
     let blog = simple(blogContext)
     let value = 'http://example.org/provider'
