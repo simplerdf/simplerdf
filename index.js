@@ -11,7 +11,7 @@ class SimpleRDF extends lite.SimpleRDF {
   }
 
   child (iri) {
-    return new SimpleRDF(this._context, iri, this._graph, this._store)
+    return new SimpleRDF(this._core.context, iri, this._core.graph, this._store)
   }
 
   get (iri, options) {
@@ -25,8 +25,7 @@ class SimpleRDF extends lite.SimpleRDF {
     }
 
     return this._store
-      .graph(this._iri.toString(), null, options)
-      .then((graph) => {
+      .graph(this._core.iri.toString(), null, options).then((graph) => {
         this.graph(graph)
 
         return this
@@ -43,11 +42,9 @@ class SimpleRDF extends lite.SimpleRDF {
       this.iri(iri)
     }
 
-    return this._store
-      .add(this._iri.toString(), this._graph, null, options)
-      .then(() => {
-        return this
-      })
+    return this._store.add(this._core.iri.toString(), this._core.graph, null, options).then(() => {
+      return this
+    })
   }
 }
 
