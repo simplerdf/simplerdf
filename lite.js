@@ -3,194 +3,74 @@
 const rdf = require('rdf-ext')
 const SimpleArray = require('./lib/array')
 const SimpleContext = require('./lib/context')
+const SimpleCore = require('./lib/core')
+const SimpleHandler = require('./lib/define-property-handler')
 
 class SimpleRDF {
   constructor (context, iri, graph) {
-    this._iri = buildIri(iri)
-    this._objects = {}
+    this._core = new SimpleCore(this)
+    this._handler = new SimpleHandler(this, this._core)
+
+    this._core.iri = SimpleCore.buildIri(iri)
 
     this.context(context)
     this.graph(graph || rdf.createGraph())
   }
 
   toString () {
-    return this._graph.toString()
+    return this._core.graph.toString()
   }
 
   context (context) {
     if (context) {
-      this._context = context instanceof SimpleContext ? context : new SimpleContext(context)
+      this._core.context = context instanceof SimpleContext ? context : new SimpleContext(context)
 
-      this._context.descriptions().forEach((description) => {
+      this._core.context.descriptions().forEach((description) => {
         // access values with full IRI
-        addProperty.call(
-          this,
-          description.predicate,
-          description.predicate,
-          description.options)
+        this._handler.addProperty(description.predicate, description.predicate, description.options)
 
         // access values with short property
-        addProperty.call(
-          this,
-          description.property,
-          description.predicate,
-          description.options)
+        this._handler.addProperty(description.property, description.predicate, description.options)
       })
     }
 
-    return this._context
+    return this._core.context
   }
 
   iri (iri) {
     if (iri) {
-      iri = buildIri(iri)
+      iri = SimpleCore.buildIri(iri)
 
-      updateSubject(this._graph, this._iri, iri)
-      updateObject(this._graph, this._iri, iri)
+      if (!iri.equals(this._core.iri)) {
+        this._core.updateSubject(iri)
+        this._core.updateObject(iri)
 
-      this._iri = iri
+        this._core.iri = iri
+      }
     }
 
-    return this._iri
+    return this._core.iri
   }
 
   graph (graph) {
     if (graph) {
-      this._graph = graph
+      this._core.graph = graph
 
-      this._graph.match(this._iri).forEach((triple) => {
+      this._core.graph.match(this._core.iri).forEach((triple) => {
         let predicate = triple.predicate.toString()
-        let descriptor = Object.getOwnPropertyDescriptor(this, predicate)
 
-        if (!descriptor) {
-          addProperty.call(this, triple.predicate.toString(), predicate)
+        if (!this._handler.hasProperty(predicate)) {
+          this._handler.addProperty(triple.predicate.toString(), predicate)
         }
       })
     }
 
-    return this._graph
+    return this._core.graph
   }
 
   child (iri) {
-    return new SimpleRDF(this._context, iri, this._graph)
+    return new SimpleRDF(this._core.context, iri, this._core.graph)
   }
-}
-
-function buildIri (iri) {
-  if (typeof iri === 'string') {
-    return rdf.createNamedNode(iri)
-  } else {
-    return iri || rdf.createBlankNode()
-  }
-}
-
-function updateSubject (graph, oldSubject, newSubject) {
-  graph.match(oldSubject).forEach(function (triple) {
-    graph.remove(triple)
-    graph.add(rdf.createTriple(newSubject, triple.predicate, triple.object))
-  })
-}
-
-function updateObject (graph, oldObject, newObject) {
-  graph.match(null, null, oldObject).forEach((triple) => {
-    graph.remove(triple)
-    graph.add(rdf.createTriple(triple.subject, triple.predicate, newObject))
-  })
-}
-
-function addValues (self, predicate, options, values) {
-  if (!Array.isArray(values)) {
-    values = [values]
-  }
-
-  values.forEach((value) => {
-    if (typeof value === 'string') {
-      if (options.namedNode) {
-        self._graph.add(rdf.createTriple(self._iri, predicate, rdf.createNamedNode(value)))
-      } else {
-        self._graph.add(rdf.createTriple(self._iri, predicate, rdf.createLiteral(value)))
-      }
-    } else if (typeof value === 'object') {
-      if (value.interfaceName) {
-        self._graph.add(rdf.createTriple(self._iri, predicate, value))
-      } else {
-        self._graph.add(rdf.createTriple(self._iri, predicate, value._iri))
-
-        // don't cache array values, because we cache the complete array
-        if (!options.array) {
-          self._objects[predicate] = value
-        }
-      }
-    } else if (typeof value === 'boolean') {
-      self._graph.add(rdf.createTriple(
-        self._iri,
-        predicate,
-        rdf.createLiteral(value, null, 'http://www.w3.org/2001/XMLSchema#boolean')))
-    } else if (typeof value === 'number') {
-      self._graph.add(rdf.createTriple(
-        self._iri,
-        predicate,
-        rdf.createLiteral(value, null, rdf.createNamedNode('http://www.w3.org/2001/XMLSchema#double'))))
-    } else {
-      console.warn('unsupported type: ' + typeof value)
-    }
-  })
-}
-
-function getValuesArray (self, predicate, options) {
-  return self._graph.match(self._iri, predicate).map((triple) => {
-    if (triple.object.interfaceName !== 'Literal') {
-      if (options.namedNode) {
-        return triple.object.toString()
-      } else {
-        return self.child(triple.object)
-      }
-    } else {
-      return triple.object.toString()
-    }
-  })
-}
-
-function getValues (self, predicate, options) {
-  if (predicate in self._objects) {
-    return self._objects[predicate]
-  }
-
-  let values = getValuesArray(self, predicate, options)
-
-  if (!options.array) {
-    values = values.shift()
-  } else {
-    values = self._objects[predicate] = new SimpleArray(
-        addValues.bind(null, self, predicate, options),
-        getValues.bind(null, self, predicate, options),
-        removeValues.bind(null, self, predicate, options),
-        getValuesArray(self, predicate, options)
-      )
-  }
-
-  return values
-}
-
-function removeValues (self, predicate, options) {
-  self._graph.removeMatches(self._iri, predicate)
-}
-
-function addProperty (property, predicate, options) {
-  options = options || {}
-
-  predicate = rdf.createNamedNode(predicate.toString())
-
-  Object.defineProperty(this, property, {
-    configurable: true,
-    get: () => {
-      return getValues(this, predicate, options)
-    },
-    set: (values) => {
-      removeValues(this, predicate, options)
-      addValues(this, predicate, options, values)
-    }
-  })
 }
 
 module.exports = function (context, iri, graph, store) {

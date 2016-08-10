@@ -64,34 +64,34 @@ describe('simplerdf', () => {
   it('constructor should create BlankNode subject if none was given', () => {
     let blog = simple(blogContext)
 
-    assert.equal(blog._iri.interfaceName, 'BlankNode')
+    assert.equal(blog._core.iri.interfaceName, 'BlankNode')
   })
 
   it('constructor should use existing NamedNode subject if one was given', () => {
     let iri = rdf.createNamedNode(blogIri)
     let blog = simple(blogContext, iri)
 
-    assert(blog._iri.equals(iri))
+    assert(blog._core.iri.equals(iri))
   })
 
   it('constructor should use existing BlankNode subject if one was given', () => {
     let iri = rdf.createBlankNode()
     let blog = simple(blogContext, iri)
 
-    assert(blog._iri.equals(iri))
+    assert(blog._core.iri.equals(iri))
   })
 
   it('constructor should create a NamedNode subject if a String was given', () => {
     let iri = rdf.createNamedNode(blogIri)
     let blog = simple(blogContext, blogIri)
 
-    assert(blog._iri.equals(iri))
+    assert(blog._core.iri.equals(iri))
   })
 
   it('constructor should use an existing graph if one was given', () => {
     let blog = simple(blogContext, blogIri, blogGraph)
 
-    assert(blogGraph.equals(blog._graph))
+    assert(blogGraph.equals(blog._core.graph))
   })
 
   it('constructor should create properties for imported graph predicates', () => {
@@ -105,14 +105,14 @@ describe('simplerdf', () => {
     let post = blog.child()
 
     assert(post instanceof simple.SimpleRDF)
-    assert.equal(post._iri.interfaceName, 'BlankNode')
+    assert.equal(post._core.iri.interfaceName, 'BlankNode')
   })
 
   it('.child should create a child object with a NamedNode subject if a String was given', () => {
     let blog = simple(blogContext)
     let post = blog.child('http://example.org/post-1')
 
-    assert(post._iri.equals('http://example.org/post-1'))
+    assert(post._core.iri.equals('http://example.org/post-1'))
   })
 
   it('getter should support String values', () => {
@@ -135,7 +135,7 @@ describe('simplerdf', () => {
 
     blog.provider = value
 
-    let node = blog._graph.match(null, 'http://schema.org/provider').toArray().shift().object
+    let node = blog._core.graph.match(null, 'http://schema.org/provider').toArray().shift().object
 
     assert.equal(node.interfaceName, 'NamedNode')
     assert.equal(node.toString(), value)
@@ -146,7 +146,7 @@ describe('simplerdf', () => {
 
     blog.name = 'simple blog'
 
-    assert.equal(blog._graph.match(null, 'http://schema.org/name').toArray().shift().object.toString(), 'simple blog')
+    assert.equal(blog._core.graph.match(null, 'http://schema.org/name').toArray().shift().object.toString(), 'simple blog')
   })
 
   it('setter should support Object values', () => {
@@ -155,7 +155,7 @@ describe('simplerdf', () => {
 
     blog.about = project
 
-    assert.equal(blog._graph.match(blog._iri, 'http://schema.org/about', project._iri).length, 1)
+    assert.equal(blog._core.graph.match(blog._iri, 'http://schema.org/about', project._iri).length, 1)
   })
 
   it('setter should support Node values', () => {
@@ -164,7 +164,7 @@ describe('simplerdf', () => {
 
     blog.about = project
 
-    assert.equal(blog._graph.match(blog._iri, 'http://schema.org/about', project).length, 1)
+    assert.equal(blog._core.graph.match(blog._iri, 'http://schema.org/about', project).length, 1)
   })
 
   it('setter should support boolean values', () => {
@@ -172,7 +172,7 @@ describe('simplerdf', () => {
 
     blog.isFamilyFriendly = true
 
-    let isFamilyFriendly = blog._graph.match(null, 'http://schema.org/isFamilyFriendly').toArray().shift().object
+    let isFamilyFriendly = blog._core.graph.match(null, 'http://schema.org/isFamilyFriendly').toArray().shift().object
 
     assert(isFamilyFriendly)
     assert.equal(isFamilyFriendly.nominalValue, true)
@@ -184,7 +184,7 @@ describe('simplerdf', () => {
 
     post.version = 0.1
 
-    let version = post._graph.match(null, 'http://schema.org/version').toArray().shift().object
+    let version = post._core.graph.match(null, 'http://schema.org/version').toArray().shift().object
 
     assert(version)
     assert.equal(version.nominalValue, 0.1)
@@ -197,7 +197,7 @@ describe('simplerdf', () => {
 
     blog.post = [post]
 
-    assert(blog._graph.match(null, 'http://schema.org/post').toArray().shift().object.equals(post._iri))
+    assert(blog._core.graph.match(null, 'http://schema.org/post').toArray().shift().object.equals(post._core.iri))
   })
 
   it('setter should support Array access', () => {
@@ -215,7 +215,7 @@ describe('simplerdf', () => {
 
     blog.post.push(post)
 
-    assert(blog._graph.match(null, 'http://schema.org/post').toArray().shift().object.equals(post._iri))
+    assert(blog._core.graph.match(null, 'http://schema.org/post').toArray().shift().object.equals(post._core.iri))
   })
 
   it('getter should support IRI strings', () => {
@@ -240,8 +240,8 @@ describe('simplerdf', () => {
     blog.post = [post]
     post.iri(postIri)
 
-    assert(blog._graph.match(null, 'http://schema.org/post').toArray().shift().object.equals(postIri))
-    assert(blog._graph.match(null, 'http://schema.org/headline').toArray().shift().subject.equals(postIri))
+    assert(blog._core.graph.match(null, 'http://schema.org/post').toArray().shift().object.equals(postIri))
+    assert(blog._core.graph.match(null, 'http://schema.org/headline').toArray().shift().subject.equals(postIri))
   })
 
   it('.toString should return the graph as N-Triples', () => {
