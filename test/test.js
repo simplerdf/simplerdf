@@ -1,12 +1,14 @@
 'use strict'
-/* global before, describe, it */
+
+/* global describe, it */
 
 const assert = require('assert')
 const rdf = require('rdf-ext')
 const simple = require('../index')
+const DatasetStore = require('rdf-store-dataset')
 const SimpleArray = require('../lib/array')
 
-var blogContext = {
+let blogContext = {
   about: 'http://schema.org/about',
   name: 'http://schema.org/name',
   provider: {
@@ -24,36 +26,31 @@ var blogContext = {
   sameAs: 'http://schema.org/sameAs'
 }
 
-var blogIri = 'http://example.org/blog'
+let blogIri = 'http://example.org/blog'
 
-var blogPostNode = rdf.createBlankNode()
+let blogPostNode = rdf.blankNode()
 
-var blogGraph = rdf.createGraph([
-  rdf.createTriple(
-    rdf.createNamedNode(blogIri),
-    rdf.createNamedNode('http://schema.org/name'),
-    rdf.createLiteral('simple blog')),
-  rdf.createTriple(
-    rdf.createNamedNode(blogIri),
-    rdf.createNamedNode('http://schema.org/post'),
-    blogPostNode),
-  rdf.createTriple(
+let blogDataset = rdf.dataset([
+  rdf.quad(
+    rdf.namedNode(blogIri),
+    rdf.namedNode('http://schema.org/name'),
+    rdf.literal('simple blog'),
+    rdf.namedNode(blogIri)),
+  rdf.quad(
+    rdf.namedNode(blogIri),
+    rdf.namedNode('http://schema.org/post'),
     blogPostNode,
-    rdf.createNamedNode('http://schema.org/headline'),
-    rdf.createLiteral('first blog post'))
+    rdf.namedNode(blogIri)),
+  rdf.quad(
+    blogPostNode,
+    rdf.namedNode('http://schema.org/headline'),
+    rdf.literal('first blog post'),
+    rdf.namedNode(blogIri))
 ])
 
-var blogStore = rdf.createStore()
+let blogGraph = rdf.graph(blogDataset)
 
 describe('simplerdf', () => {
-  before((done) => {
-    blogStore.add('http://example.org/blog', blogGraph).then(() => {
-      done()
-    }).catch((error) => {
-      done(error)
-    })
-  })
-
   it('constructor should import context', () => {
     let blog = simple(blogContext)
 
@@ -64,25 +61,25 @@ describe('simplerdf', () => {
   it('constructor should create BlankNode subject if none was given', () => {
     let blog = simple(blogContext)
 
-    assert.equal(blog._core.iri.interfaceName, 'BlankNode')
+    assert.equal(blog._core.iri.termType, 'BlankNode')
   })
 
   it('constructor should use existing NamedNode subject if one was given', () => {
-    let iri = rdf.createNamedNode(blogIri)
+    let iri = rdf.namedNode(blogIri)
     let blog = simple(blogContext, iri)
 
     assert(blog._core.iri.equals(iri))
   })
 
   it('constructor should use existing BlankNode subject if one was given', () => {
-    let iri = rdf.createBlankNode()
+    let iri = rdf.blankNode()
     let blog = simple(blogContext, iri)
 
     assert(blog._core.iri.equals(iri))
   })
 
   it('constructor should create a NamedNode subject if a String was given', () => {
-    let iri = rdf.createNamedNode(blogIri)
+    let iri = rdf.namedNode(blogIri)
     let blog = simple(blogContext, blogIri)
 
     assert(blog._core.iri.equals(iri))
@@ -105,14 +102,14 @@ describe('simplerdf', () => {
     let post = blog.child()
 
     assert(post instanceof simple.SimpleRDF)
-    assert.equal(post._core.iri.interfaceName, 'BlankNode')
+    assert.equal(post._core.iri.termType, 'BlankNode')
   })
 
   it('.child should create a child object with a NamedNode subject if a String was given', () => {
     let blog = simple(blogContext)
     let post = blog.child('http://example.org/post-1')
 
-    assert(post._core.iri.equals('http://example.org/post-1'))
+    assert(post._core.iri.equals(rdf.namedNode('http://example.org/post-1')))
   })
 
   it('getter should support String values', () => {
@@ -135,10 +132,13 @@ describe('simplerdf', () => {
 
     blog.provider = value
 
-    let node = blog._core.graph.match(null, 'http://schema.org/provider').toArray().shift().object
+    let node = blog._core.graph.match(null, rdf.namedNode('http://schema.org/provider'))
+      .toArray()
+      .shift()
+      .object
 
-    assert.equal(node.interfaceName, 'NamedNode')
-    assert.equal(node.toString(), value)
+    assert.equal(node.termType, 'NamedNode')
+    assert.equal(node.value, value)
   })
 
   it('setter should support String values', () => {
@@ -146,7 +146,13 @@ describe('simplerdf', () => {
 
     blog.name = 'simple blog'
 
-    assert.equal(blog._core.graph.match(null, 'http://schema.org/name').toArray().shift().object.toString(), 'simple blog')
+    let node = blog._core.graph.match(null, rdf.namedNode('http://schema.org/name'))
+      .toArray()
+      .shift()
+      .object
+      .value
+
+    assert.equal(node, 'simple blog')
   })
 
   it('setter should support Object values', () => {
@@ -155,16 +161,16 @@ describe('simplerdf', () => {
 
     blog.about = project
 
-    assert.equal(blog._core.graph.match(blog._iri, 'http://schema.org/about', project._iri).length, 1)
+    assert.equal(blog._core.graph.match(blog._iri, rdf.namedNode('http://schema.org/about'), project._iri).length, 1)
   })
 
   it('setter should support Node values', () => {
     let blog = simple(blogContext)
-    let project = rdf.createNamedNode('http://example.org/project')
+    let project = rdf.namedNode('http://example.org/project')
 
     blog.about = project
 
-    assert.equal(blog._core.graph.match(blog._iri, 'http://schema.org/about', project).length, 1)
+    assert.equal(blog._core.graph.match(blog._iri, rdf.namedNode('http://schema.org/about'), project).length, 1)
   })
 
   it('setter should support boolean values', () => {
@@ -172,11 +178,13 @@ describe('simplerdf', () => {
 
     blog.isFamilyFriendly = true
 
-    let isFamilyFriendly = blog._core.graph.match(null, 'http://schema.org/isFamilyFriendly').toArray().shift().object
+    let isFamilyFriendly = blog._core.graph.match(null, rdf.namedNode('http://schema.org/isFamilyFriendly'))
+      .toArray()
+      .shift()
+      .object
 
     assert(isFamilyFriendly)
-    assert.equal(isFamilyFriendly.nominalValue, true)
-    assert(isFamilyFriendly.datatype.equals('http://www.w3.org/2001/XMLSchema#boolean'))
+    assert(isFamilyFriendly.datatype.equals(rdf.namedNode('http://www.w3.org/2001/XMLSchema#boolean')))
   })
 
   it('setter should support number values', () => {
@@ -184,11 +192,13 @@ describe('simplerdf', () => {
 
     post.version = 0.1
 
-    let version = post._core.graph.match(null, 'http://schema.org/version').toArray().shift().object
+    let version = post._core.graph.match(null, rdf.namedNode('http://schema.org/version'))
+      .toArray()
+      .shift()
+      .object
 
     assert(version)
-    assert.equal(version.nominalValue, 0.1)
-    assert(version.datatype.equals('http://www.w3.org/2001/XMLSchema#double'))
+    assert(version.datatype.equals(rdf.namedNode('http://www.w3.org/2001/XMLSchema#double')))
   })
 
   it('setter should support Array values', () => {
@@ -197,7 +207,9 @@ describe('simplerdf', () => {
 
     blog.post = [post]
 
-    assert(blog._core.graph.match(null, 'http://schema.org/post').toArray().shift().object.equals(post._core.iri))
+    let node = blog._core.graph.match(null, rdf.namedNode('http://schema.org/post')).toArray().shift().object
+
+    assert(node.equals(post._core.iri))
   })
 
   it('setter should support Array access', () => {
@@ -215,20 +227,50 @@ describe('simplerdf', () => {
 
     blog.post.push(post)
 
-    assert(blog._core.graph.match(null, 'http://schema.org/post').toArray().shift().object.equals(post._core.iri))
+    let node = blog._core.graph.match(null, rdf.namedNode('http://schema.org/post')).toArray().shift().object
+
+    assert(node.equals(post._core.iri))
   })
 
   it('getter should support IRI strings', () => {
-    let blogGraph = rdf.createGraph()
+    let blogGraph = rdf.dataset()
     let blog = simple(blogContext, null, blogGraph)
 
-    blogGraph.add(rdf.createTriple(
+    blogGraph.add(rdf.quad(
       blog.iri(),
-      rdf.createNamedNode('http://schema.org/provider'),
-      rdf.createNamedNode('http://example.org/provider')
+      rdf.namedNode('http://schema.org/provider'),
+      rdf.namedNode('http://example.org/provider')
     ))
 
     assert.equal(blog.provider, 'http://example.org/provider')
+  })
+
+  it('getter should support boolean values', () => {
+    let blogGraph = rdf.dataset()
+    let blog = simple(blogContext, null, blogGraph)
+
+    blogGraph.add(rdf.quad(
+      blog.iri(),
+      rdf.namedNode('http://schema.org/isFamilyFriendly'),
+      rdf.literal('true', rdf.namedNode('http://www.w3.org/2001/XMLSchema#boolean'))
+    ))
+
+    assert.equal(typeof blog.isFamilyFriendly, 'boolean')
+    assert.equal(blog.isFamilyFriendly, true)
+  })
+
+  it('getter should support number values', () => {
+    let blogGraph = rdf.dataset()
+    let blog = simple(blogContext, null, blogGraph)
+
+    blogGraph.add(rdf.quad(
+      blog.iri(),
+      rdf.namedNode('http://schema.org/version'),
+      rdf.literal('0.1', rdf.namedNode('http://www.w3.org/2001/XMLSchema#double'))
+    ))
+
+    assert.equal(typeof blog.version, 'number')
+    assert.equal(blog.version, 0.1)
   })
 
   it('.iri should do subject update inc. subject and object updates in graph', () => {
@@ -240,8 +282,8 @@ describe('simplerdf', () => {
     blog.post = [post]
     post.iri(postIri)
 
-    assert(blog._core.graph.match(null, 'http://schema.org/post').toArray().shift().object.equals(postIri))
-    assert(blog._core.graph.match(null, 'http://schema.org/headline').toArray().shift().subject.equals(postIri))
+    assert(blog._core.graph.match(null, rdf.namedNode('http://schema.org/post')).toArray().shift().object.equals(rdf.namedNode(postIri)))
+    assert(blog._core.graph.match(null, rdf.namedNode('http://schema.org/headline')).toArray().shift().subject.equals(rdf.namedNode(postIri)))
   })
 
   it('.toString should return the graph as N-Triples', () => {
@@ -251,7 +293,7 @@ describe('simplerdf', () => {
 
     blog.post = [post]
 
-    assert.equal(blog.toString(), '<http://example.org/blog> <http://schema.org/post> <http://example.org/post-1> .')
+    assert.equal(blog.toString().trim(), '<http://example.org/blog> <http://schema.org/post> <http://example.org/post-1> .')
   })
 
   it('should keep assigned objects', () => {
@@ -272,7 +314,7 @@ describe('simplerdf', () => {
   it('should use a SimpleRDF object to handle NamedNodes', () => {
     let blog = simple(blogContext, blogIri)
 
-    blog.sameAs = rdf.createNamedNode(blogIri + '/theSame')
+    blog.sameAs = rdf.namedNode(blogIri + '/theSame')
 
     assert(blog.sameAs instanceof simple.SimpleRDF)
   })
@@ -280,12 +322,16 @@ describe('simplerdf', () => {
   it('should use a SimpleRDF object to handle BlankNodes', () => {
     let blog = simple(blogContext, blogIri)
 
-    blog.sameAs = rdf.createBlankNode()
+    blog.sameAs = rdf.blankNode()
 
     assert(blog.sameAs instanceof simple.SimpleRDF)
   })
 
   it('.get should fetch an object from the store with Promise API', (done) => {
+    let blogStore = new DatasetStore({
+      dataset: blogDataset.clone()
+    })
+
     simple(blogContext, blogIri, null, blogStore).get().then((blog) => {
       assert.equal(blog.name, 'simple blog')
       assert.equal(blog.post.at(0).headline, 'first blog post')
@@ -297,6 +343,10 @@ describe('simplerdf', () => {
   })
 
   it('.get should be able to pass options to request handler', (done) => {
+    let blogStore = new DatasetStore({
+      dataset: blogDataset.clone()
+    })
+
     simple(blogContext, blogIri, null, blogStore).get({withCredentials: false}).then((blog) => {
       assert.equal(blog.name, 'simple blog')
       assert.equal(blog.post.at(0).headline, 'first blog post')
@@ -308,6 +358,10 @@ describe('simplerdf', () => {
   })
 
   it('.get should fetch an object from the store using the given IRI with Promise API', (done) => {
+    let blogStore = new DatasetStore({
+      dataset: blogDataset.clone()
+    })
+
     simple(blogContext, null, null, blogStore).get(blogIri).then((blog) => {
       assert.equal(blog.name, 'simple blog')
       assert.equal(blog.post.at(0).headline, 'first blog post')
@@ -319,43 +373,13 @@ describe('simplerdf', () => {
   })
 
   it('.save should store an object using the store with Promise API', (done) => {
+    let blogStore = new DatasetStore()
     let blog = simple(blogContext, blogIri, blogGraph.clone(), blogStore)
-    let blogCloneIri = 'http://example.org/blog-clone'
 
-    blog.iri(blogCloneIri)
-    blog.save().then((blogClone) => {
-      return blogStore.graph(blogCloneIri)
-    }).then((graph) => {
-      // patch graph ...
-      graph.match(blogCloneIri).forEach((triple) => {
-        graph.remove(triple)
-        graph.add(rdf.createTriple(rdf.createNamedNode(blogIri), triple.predicate, triple.object))
-      })
+    blog.save().then(() => {
+      const blogDataset = rdf.dataset(blogGraph, rdf.namedNode(blogIri))
 
-      // ... for compare
-      assert(graph.equals(blogGraph))
-
-      done()
-    }).catch((error) => {
-      done(error)
-    })
-  })
-
-  it('.save should store an object using the store with Promise API', (done) => {
-    let blog = simple(blogContext, blogIri, blogGraph.clone(), blogStore)
-    let blogCloneIri = 'http://example.org/blog-clone'
-
-    blog.save(blogCloneIri).then((blogClone) => {
-      return blogStore.graph(blogCloneIri)
-    }).then((graph) => {
-      // patch graph ...
-      graph.match(blogCloneIri).forEach((triple) => {
-        graph.remove(triple)
-        graph.add(rdf.createTriple(rdf.createNamedNode(blogIri), triple.predicate, triple.object))
-      })
-
-      // ... for compare
-      assert(graph.equals(blogGraph))
+      assert(blogStore.dataset.equals(blogDataset))
 
       done()
     }).catch((error) => {

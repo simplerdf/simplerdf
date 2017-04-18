@@ -14,7 +14,7 @@ class SimpleRDF {
     this._core.iri = SimpleCore.buildIri(iri)
 
     this.context(context)
-    this.graph(graph || rdf.createGraph())
+    this.graph(graph || rdf.dataset())
   }
 
   toString () {
@@ -57,10 +57,10 @@ class SimpleRDF {
       this._core.graph = graph
 
       this._core.graph.match(this._core.iri).forEach((triple) => {
-        let predicate = triple.predicate.toString()
+        let property = triple.predicate.value
 
-        if (!this._handler.hasProperty(predicate)) {
-          this._handler.addProperty(triple.predicate.toString(), predicate)
+        if (!this._handler.hasProperty(property)) {
+          this._handler.addProperty(property, triple.predicate)
         }
       })
     }

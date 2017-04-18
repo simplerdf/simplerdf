@@ -2,8 +2,7 @@
   "name": "simplerdf",
   "version": "0.2.14",
   "description": "RDF as easy as js objects",
-  "main": "dist/index.js",
-  "jsnext:main": "index.js",
+  "main": "index.js",
   "scripts": {
     "test": "npm run build && mocha",
     "build": "mkdir -p dist && babel --ignore node_modules,dist,examples ./ -d dist",
@@ -27,10 +26,11 @@
     "babelify": "^7.3.0",
     "browserify": "^12.0.1",
     "mocha": "^2.4.5",
+    "rdf-store-dataset": "git://github.com/rdf-ext/rdf-store-dataset#develop",
     "uglifyjs": "^2.4.10"
   },
   "dependencies": {
-    "rdf-ext": "^0.3.0",
-    "rdf-store-ldp": "^0.3.1"
+    "rdf-ext": "git://github.com/rdf-ext/rdf-ext#develop",
+    "rdf-store-web": "git://github.com/rdf-ext/rdf-store-web#develop"
   }
 }

@@ -1,13 +1,14 @@
 'use strict'
 
-const LdpStore = require('rdf-store-ldp')
+const WebStore = require('rdf-store-web')
 const lite = require('./lite')
+const rdf = require('rdf-ext')
 
 class SimpleRDF extends lite.SimpleRDF {
   constructor (context, iri, graph, store) {
     super(context, iri, graph)
 
-    this._store = store || new LdpStore()
+    this._store = store || new WebStore()
   }
 
   child (iri) {
@@ -24,12 +25,11 @@ class SimpleRDF extends lite.SimpleRDF {
       this.iri(iri)
     }
 
-    return this._store
-      .graph(this._core.iri.toString(), null, options).then((graph) => {
-        this.graph(graph)
+    return rdf.dataset().import(this._store.match(null, null, null, this._core.iri, options)).then((graph) => {
+      this.graph(graph)
 
-        return this
-      })
+      return this
+    })
   }
 
   save (iri, options) {
@@ -42,9 +42,10 @@ class SimpleRDF extends lite.SimpleRDF {
       this.iri(iri)
     }
 
-    return this._store.add(this._core.iri.toString(), this._core.graph, null, options).then(() => {
-      return this
-    })
+    // assign IRI to the graph of all quads
+    let dataset = rdf.dataset(this._core.graph, this._core.iri)
+
+    return rdf.waitFor(this._store.import(dataset.toStream()))
   }
 }
 
