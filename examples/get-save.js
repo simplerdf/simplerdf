@@ -1,7 +1,8 @@
-var rdf = require('rdf-ext')
-var simple = require('../')
+const rdf = require('rdf-ext')
+const simple = require('..')
+const DatasetStore = require('rdf-store-dataset')
 
-var blogContext = {
+const blogContext = {
   name: 'http://schema.org/name',
   post: {
     '@id': 'http://schema.org/post',
@@ -11,42 +12,41 @@ var blogContext = {
   content: 'http://schema.org/content'
 }
 
-var blogIri = 'http://example.org/blog'
+const blogIri = rdf.namedNode('http://example.org/blog')
+const blogPostNode = rdf.blankNode()
 
-var blogPostNode = rdf.createBlankNode()
-
-var blogGraph = rdf.createGraph([
-  rdf.createTriple(
-    rdf.createNamedNode(blogIri),
-    rdf.createNamedNode('http://schema.org/name'),
-    rdf.createLiteral('simple blog')),
-  rdf.createTriple(
-    rdf.createNamedNode(blogIri),
-    rdf.createNamedNode('http://schema.org/post'),
+const blogGraph = rdf.dataset([
+  rdf.quad(
+    blogIri,
+    rdf.namedNode('http://schema.org/name'),
+    rdf.literal('simple blog')),
+  rdf.quad(
+    blogIri,
+    rdf.namedNode('http://schema.org/post'),
     blogPostNode),
-  rdf.createTriple(
+  rdf.quad(
     blogPostNode,
-    rdf.createNamedNode('http://schema.org/headline'),
-    rdf.createLiteral('first blog post'))
-])
+    rdf.namedNode('http://schema.org/headline'),
+    rdf.literal('first blog post'))
+], blogIri)
 
-var blogStore = rdf.createStore()
+let blogStore = new DatasetStore({dataset: blogGraph})
 
-blogStore.add('http://example.org/blog', blogGraph).then(function () {
-  return simple(blogContext, blogIri, null, blogStore).get()
-}).then(function (blog) {
-  console.log('fetched blog from: ' + blog._iri.toString())
+simple(blogContext, blogIri, null, blogStore).get().then((blog) => {
+  console.log('fetched blog from: ' + blog.iri())
   console.log(blog.name)
-  console.log(blog.post.shift().headline)
+  console.log(blog.post.at(0).headline)
 
   // move blog to new location
   blog.iri('http://example.org/new-blog')
 
-  return blog.save()
-}).then(function (blog) {
-  console.log('stored blog at: ' + blog._iri.toString())
+  return blog.save().then(() => {
+    console.log('stored blog at: ' + blog.iri())
 
-  return blogStore.graph('http://example.org/new-blog')
-}).then(function (graph) {
-  console.log('N-Triples: ' + graph.toString())
+    const dataset = blogStore.dataset.match(null, null, null, rdf.namedNode('http://example.org/new-blog'))
+
+    console.log('N-Triples: ' + dataset.toString())
+  })
+}).catch((err) => {
+  console.error(err.stack || err.message)
 })

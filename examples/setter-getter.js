@@ -1,6 +1,6 @@
-var simple = require('../')
+const simple = require('..')
 
-var blogContext = {
+const blogContext = {
   name: 'http://schema.org/name',
   post: {
     '@id': 'http://schema.org/post',
@@ -10,9 +10,9 @@ var blogContext = {
   content: 'http://schema.org/content'
 }
 
-var blogIri = 'http://example.org/blog'
+const blogIri = 'http://example.org/blog'
 
-var blog = simple(blogContext, blogIri)
+let blog = simple(blogContext, blogIri)
 
 blog.name = 'bergis blog'
 
