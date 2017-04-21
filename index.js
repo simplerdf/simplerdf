@@ -1,10 +1,10 @@
 'use strict'
 
 const WebStore = require('rdf-store-web')
-const lite = require('./lite')
+const SimpleRDFCore = require('simplerdf-core')
 const rdf = require('rdf-ext')
 
-class SimpleRDF extends lite.SimpleRDF {
+class SimpleRDF extends SimpleRDFCore {
   constructor (context, iri, graph, store) {
     super(context, iri, graph)
 
@@ -53,5 +53,5 @@ module.exports = function (context, iri, graph, store) {
   return new SimpleRDF(context, iri, graph, store)
 }
 
-module.exports.isArray = lite.isArray
+module.exports.isArray = SimpleRDFCore.isArray
 module.exports.SimpleRDF = SimpleRDF

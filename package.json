@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "rdf-ext": "git://github.com/rdf-ext/rdf-ext#develop",
-    "rdf-store-web": "git://github.com/rdf-ext/rdf-store-web#develop"
+    "rdf-store-web": "git://github.com/rdf-ext/rdf-store-web#develop",
+    "simplerdf-core": "git://github.com/simplerdf/simplerdf-core#develop"
   }
 }
