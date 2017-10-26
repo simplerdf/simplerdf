@@ -18,7 +18,7 @@
 
 RDF should be as easy as playing with JSON objects.
 
-Read the original blog post: [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015/)
+Read the original blog post: [_Towards the future RDF Library_](http://nicola.io/future-rdf/2015)
 
 ```javascript
 var simple = require('simplerdf')
